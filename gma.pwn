@@ -5,7 +5,6 @@
 #include <a_mysql>
 #include <sscanf>
 
-
 main()
 {
 	print("\n----------------------------------");
@@ -17,24 +16,21 @@ main()
 #undef MAX_PLAYERS
 #endif
 #define MAX_PLAYERS 550
-
 #define MAX_PLOBBY 4
+
 new Activate[30];
 new Popchase[30][MAX_PLOBBY];
 new Lobby[30];
 new AL[30];
 new Adv[144];
-new CountLobby[30];
-new TimersLobby[30];
-new EndLobby[30];
-new MySQL: sql;
+new MySQL:sql;
+
 new Float:LobbyX, Float:LobbyY, Float:LobbyZ;
 new Suspect[30];
 new PlayerText:LobbyTD[MAX_PLAYERS][8];
 new PlayerText:SuspectUI[MAX_PLAYERS][MAX_PLOBBY];
 new PlayerText:SusUI[MAX_PLAYERS][MAX_PLOBBY];
 new LobbyName[30][MAX_PLOBBY][MAX_PLAYER_NAME];
-new ActionLobby[30][MAX_PLOBBY];
 new PlayerText:MenuUI[MAX_PLAYERS][2];
 
 enum PI
@@ -50,220 +46,7 @@ enum PI
 
 new PlayerInfo[MAX_PLAYERS][PI];
 
-public TimerLobby(number)
-{
-	format(Adv, 144, "До запуска лобби №%i осталось %i секунд.", number, CountLobby[number]);
-	for(new i = 0; i < MAX_PLAYERS; i++)
-	{
-	    if(PlayerInfo[i][Lb] == number)
-	    SendClientMessage(i, 0xFF000000, Adv);
-	}
-	CountLobby[number]--;
-	if(CountLobby[number] == 0)
-	{
-		if(Lobby[number] < 2)
-		{
-		    format(Adv, 144, "В лобби №%i слишком мало людей, лобби отключено!", number);
-		    KillTimer(TimersLobby[number]);
-		    AL[number] = 1;
-		}
-		else
-		{
-		    format(Adv, 144, "Лобби №%i запущено!", number);
-			new Alo = 0;
-		    new LobbyPlayers[MAX_PLOBBY];
-		    KillTimer(TimersLobby[number]);
-		    new K;
-		    while(K == 0)
-		    {
-				for(new i = 0; i < MAX_PLOBBY; i++)
-				{
-				    if(Popchase[number][i] == -1)
-					{
-					    LobbyPlayers[Alo] = i;
-						Alo++;
-						continue;
-					}
-					else if(Popchase[number][i] > -1)
-					{
-					    Suspect[number] = Popchase[number][i];
-					    SendClientMessage(Popchase[number][i], 0xFF000000, "Вы подозреваемый!");
-					    break;
-					}
-				}
-				break;
-			}
-		    new RandomSpawn[4];
-			for(new i = 0; i < MAX_PLOBBY; i++)
-			{
-			    if(Popchase[number][i] == -1) continue;
-				mu:
-				switch(random(4))
-				{
-				    case 0:
-					{
-						if(RandomSpawn[0] == 0)
-						{
-							RandomSpawn[0] = 1;
-							new vehicles;
-							vehicles = CreateVehicle(598, 2092.0852,1362.2789,10.8203, 0, 0, 0, 0);
-							SetVehicleVirtualWorld(vehicles, number);
-							PutPlayerInVehicle(Popchase[number][i], vehicles, 0);
-						}
-						else
-						{
-						    goto mu;
-						}
-					}
-				    case 1:
-					{
-						if(RandomSpawn[1] == 0)
-						{
-							RandomSpawn[1] = 1;
-							new vehicles;
-							vehicles = CreateVehicle(598, 2176.9316,1362.7762,10.8203,273.2155, 0, 0, 0, 0);
-							SetVehicleVirtualWorld(vehicles, number);
-							PutPlayerInVehicle(Popchase[number][i], vehicles, 0);
-						}
-						else
-						{
-			   				goto mu;
-						}
-					}
-				    case 2:
-					{
-					    if(RandomSpawn[2] == 0)
-						{
-							RandomSpawn[2] = 1;
-							new vehicles;
-							vehicles = CreateVehicle(598, 2176.6548,1205.9191,10.8203,181.7213, 0, 0, 0, 0);
-							SetVehicleVirtualWorld(vehicles, number);
-							PutPlayerInVehicle(Popchase[number][i], vehicles, 0);
-						}
-						else
-						{
-			   				goto mu;
-						}
-					}
-				    case 3:
-					{
-    					if(RandomSpawn[3] == 0)
-						{
-							RandomSpawn[3] = 1;
-							new vehicles;
-							vehicles = CreateVehicle(598, 2083.3323,1203.6499,10.8203, 0, 0, 0, 0);
-							SetVehicleVirtualWorld(vehicles, number);
-							PutPlayerInVehicle(Popchase[number][i], vehicles, 0);
-						}
-						else
-						{
-			   				goto mu;
-						}
-					}
-				}
-			}
-			for(new i; i < MAX_PLOBBY; i++)
-			{
-			    ActionLobby[number][i] = Popchase[number][i];
-			}
-			for(new i; i < MAX_PLOBBY; i++) // для всего лобби действие
-			{
-				if(Popchase[number][i] == -1) continue;
-				if(Popchase[number][i] == Suspect[number])
-				{
-					new Name[MAX_PLAYER_NAME];
-					Name = GPN(Popchase[number][i]);
-					new PrintName[40];
-					format(PrintName, MAX_PLAYER_NAME+6, "~n~%s(%i)~n~~n~", Name, Popchase[number][i]);
-					
-					MenuUI[Popchase[number][i]][0] = CreatePlayerTextDraw(Popchase[number][i], 90, 210, PrintName);
-					PlayerTextDrawUseBox(Popchase[number][i], MenuUI[Popchase[number][i]][0], 1);
-					PlayerTextDrawBoxColor(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0xc00022ff);
-					PlayerTextDrawTextSize(Popchase[number][i], MenuUI[Popchase[number][i]][0], 100, 150);
-					PlayerTextDrawFont(Popchase[number][i], MenuUI[Popchase[number][i]][0], 2);
-					PlayerTextDrawLetterSize(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0.2, 0.8);
-					PlayerTextDrawSetShadow(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0);
-					PlayerTextDrawAlignment(Popchase[number][i], MenuUI[Popchase[number][i]][0], 2);
-					PlayerTextDrawShow(Popchase[number][i], MenuUI[Popchase[number][i]][0]);
-					
-					new TextTD[240];
-					format(TextTD, 240, "~n~~n~Time remaining: 601~n~~n~~n~Cops remaining: %i~n~~n~~n~Vehicle hp: 1000~n~~n~", Lobby[number] - 1);
-					MenuUI[Popchase[number][i]][1] = CreatePlayerTextDraw(Popchase[number][i], 90, 234, TextTD);
-					PlayerTextDrawUseBox(Popchase[number][i], MenuUI[Popchase[number][i]][1], 1);
-					PlayerTextDrawBoxColor(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0x000000ff);
-					PlayerTextDrawTextSize(Popchase[number][i], MenuUI[Popchase[number][i]][1], 100, 150);
-					PlayerTextDrawFont(Popchase[number][i], MenuUI[Popchase[number][i]][1], 2);
-					PlayerTextDrawLetterSize(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0.2, 0.8);
-					PlayerTextDrawSetShadow(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0);
-					PlayerTextDrawAlignment(Popchase[number][i], MenuUI[Popchase[number][i]][1], 2);
-					PlayerTextDrawShow(Popchase[number][i], MenuUI[Popchase[number][i]][1]);
-					continue;
-				} 
-				for(new i1; i1 < MAX_PLOBBY; i1++) // отрисовываем кол-во игроков
-				{
-					if(Popchase[number][i1] == -1) continue;
-					if(Popchase[number][i1] == Suspect[number]) continue;
-					new Name[MAX_PLAYER_NAME];
-					Name = GPN(Popchase[number][i1]);
-					new Text[60];
-					strcat(Text, Name);
-					new Texts[60];
-					format(Texts, 60,"%s", Text);
-					
-		            SuspectUI[Popchase[number][i]][i1] = CreatePlayerTextDraw(Popchase[number][i], 460, 240 + 12 * i1, Texts);
-					PlayerTextDrawUseBox(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 1);
-					PlayerTextDrawBoxColor(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 0x000000FF);
-					PlayerTextDrawTextSize(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 595, 20);
-					PlayerTextDrawFont(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 2);
-					PlayerTextDrawLetterSize(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 0.2, 0.8);
-					PlayerTextDrawSetShadow(Popchase[number][i], SuspectUI[Popchase[number][i]][i1], 0);
-					PlayerTextDrawShow(Popchase[number][i], SuspectUI[Popchase[number][i]][i1]);
-					
-					SusUI[Popchase[number][i]][i1] = CreatePlayerTextDraw(Popchase[number][i], 590, 240 + 12 * i1, "Blizko");
-					PlayerTextDrawUseBox(Popchase[number][i], SusUI[Popchase[number][i]][i1], 1);
-					PlayerTextDrawBoxColor(Popchase[number][i], SusUI[Popchase[number][i]][i1], 0x000000FF);
-					PlayerTextDrawTextSize(Popchase[number][i], SusUI[Popchase[number][i]][i1], 640, 20);
-					PlayerTextDrawFont(Popchase[number][i], SusUI[Popchase[number][i]][i1], 2);
-					PlayerTextDrawLetterSize(Popchase[number][i], SusUI[Popchase[number][i]][i1], 0.2, 0.8);
-					PlayerTextDrawSetShadow(Popchase[number][i], SusUI[Popchase[number][i]][i1], 0);
-					PlayerTextDrawShow(Popchase[number][i], SusUI[Popchase[number][i]][i1]);
-				}
-				new Name[MAX_PLAYER_NAME];
-				Name = GPN(Popchase[number][i]);
-				new PrintName[40];
-				
-				format(PrintName, MAX_PLAYER_NAME+6, "~n~%s(%i)~n~~n~", Name, Popchase[number][i]);
-				MenuUI[Popchase[number][i]][0] = CreatePlayerTextDraw(Popchase[number][i], 90, 210, PrintName);
-				PlayerTextDrawUseBox(Popchase[number][i], MenuUI[Popchase[number][i]][0], 1);
-				PlayerTextDrawBoxColor(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0x0044bbB0);
-				PlayerTextDrawTextSize(Popchase[number][i], MenuUI[Popchase[number][i]][0], 80, 150);
-				PlayerTextDrawFont(Popchase[number][i], MenuUI[Popchase[number][i]][0], 2);
-				PlayerTextDrawLetterSize(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0.2, 0.8);
-				PlayerTextDrawSetShadow(Popchase[number][i], MenuUI[Popchase[number][i]][0], 0);
-				PlayerTextDrawAlignment(Popchase[number][i], MenuUI[Popchase[number][i]][0], 2);
-				PlayerTextDrawShow(Popchase[number][i], MenuUI[Popchase[number][i]][0]);
-				
-				Name = GPN(Suspect[number]);
-				new TextTD[250];
-				format(TextTD, 250, "~n~~n~Time remaining: 601~n~~n~~n~Suspect: %s ~n~~n~~n~Minimap: Ne vidno~n~~n~", Name);
-				MenuUI[Popchase[number][i]][1] = CreatePlayerTextDraw(Popchase[number][i], 90, 234, "~n~~n~Time remaining: 601~n~~n~~n~Suspect: ~n~~n~~n~Minimap:~n~~n~");
-				PlayerTextDrawUseBox(Popchase[number][i], MenuUI[Popchase[number][i]][1], 1);
-				PlayerTextDrawBoxColor(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0x000000ff);
-				PlayerTextDrawTextSize(Popchase[number][i], MenuUI[Popchase[number][i]][1], 80, 150);
-				PlayerTextDrawFont(Popchase[number][i], MenuUI[Popchase[number][i]][1], 2);
-				PlayerTextDrawLetterSize(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0.2, 0.8);
-				PlayerTextDrawSetShadow(Popchase[number][i], MenuUI[Popchase[number][i]][1], 0);
-				PlayerTextDrawAlignment(Popchase[number][i], MenuUI[Popchase[number][i]][1], 2);
-				PlayerTextDrawShow(Popchase[number][i], MenuUI[Popchase[number][i]][1]);
-			}
-		    AL[number] = 2;
-		    CountLobby[number] = 601;
-			EndLobby[number] = SetTimerEx("EndTimer", 1000, true, "i", number);
-	    }
-	    SendClientMessageToAll(0xFF000000, Adv);
-	}
-	return 1;
-}
+
 
 stock GPN(playerid)
 {
@@ -272,53 +55,6 @@ stock GPN(playerid)
 	return Name;
 }
 
-public EndTimer(number)
-{
-	if(CountLobby[number] > 0)
-	{
-		CountLobby[number]--;
-		for(new i; i < MAX_PLOBBY; i++)
-		{
-		    if(Popchase[number][i] == -1) continue;
-			if(Popchase[number][i] == Suspect[number])
-			{
-			    new Float:VehicleHP, VehID;
-				VehID = GetPlayerVehicleID(i);
-			    GetVehicleHealth(VehID, VehicleHP);
-			    format(Adv, 400, "~n~~n~Time remaining: %i sec~n~~n~~n~Cops remaining: %i~n~~n~~n~Vehicle hp: %.0f~n~~n~", CountLobby[number], Lobby[number] - 1, VehicleHP);
-				PlayerTextDrawSetString(Popchase[number][i], MenuUI[Popchase[number][i]][1], Adv);
-			}
-			else
-			{
-				new Name[MAX_PLAYER_NAME];
-				Name = GPN(Suspect[number]);
-				format(Adv, 400, "~n~~n~Time remaining: %i sec~n~~n~~n~Suspect: %s~n~~n~~n~Minimap: Ne vidno~n~~n~", CountLobby[number], Name);
-				PlayerTextDrawSetString(Popchase[number][i], MenuUI[Popchase[number][i]][1], Adv);
-			}
-		}
-		SendClientMessageToAll(0xFF000000, Adv);
- 	}
- 	else
-	{
-	    format(Adv, 144, "Лобби %i закрывается", number);
-		SendClientMessageToAll(0xFF000000, Adv);
-		Suspect[number] = -1;
-		for(new i = 0; i < MAX_PLOBBY; i++)
-		{
-			if(Popchase[number][i] == -1) { continue; }
-			else
-			{
-				PlayerInfo[Popchase[number][i]][Lb] = -1;
-				SendClientMessage(Popchase[number][i], 0xFF000000, "Вы покинули лобби");
-		    	Popchase[number][i] = -1;
-		    }
-		}
-		KillTimer(EndLobby[number]);
-		AL[number] = 0;
- 		Lobby[number] = 0;
-	}
-	return 1;
-}
 
 public OnGameModeInit()
 {
@@ -366,8 +102,7 @@ public OnVehicleDamageStatusUpdate(vehicleid, playerid)
 	    new string[250];
 		new Float:VehHP;
 		GetVehicleHealth(vehicleid, VehHP);
-	    format(string, sizeof(string), "~n~~n~Time remaining: %i sec~n~~n~~n~Cops remaining: %i~n~~n~~n~Vehicle hp: %.0f~n~~n~", CountLobby[PlayerInfo[playerid][Lb]], Lobby[PlayerInfo[playerid][Lb]], VehHP);
-		PlayerTextDrawSetString(playerid, MenuUI[playerid][1], string);
+	    PlayerTextDrawSetString(playerid, MenuUI[playerid][1], string);
 	}
 	return 1;
 }
@@ -460,7 +195,6 @@ public OnPlayerDeath(playerid, killerid, reason)
 				OpenTD(Popchase[LB][i]);
 				TogglePlayerSpectating(playerid, 1);
 			}
-			KillTimer(EndLobby[LB]);
 			Lobby[LB]--;
 			OpenTD(playerid);
 			Popchase[LB][playerid] = -1;
@@ -828,14 +562,12 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 						Popchase[i][ik] = playerid;
 						PlayerInfo[playerid][Lb] = i;
 						Lobby[i]++;
-						CountLobby[i] = 15;
 						SetPlayerVirtualWorld(playerid, i);
 						if(Activate[i] == 0)
 						{
 							if(Lobby[i] > 2)
 							{
 							    Activate[i] = 1;
-							    TimersLobby[i] = SetTimerEx("TimerLobby", 1000, true, "i", i);
 							}
 						}
 						break;
