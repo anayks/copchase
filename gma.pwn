@@ -82,9 +82,10 @@ public OnGameModeInit()
 	DisableInteriorEnterExits();
 	return 1;
 }
-
+new A;
 public OnGameModeExit()
 {
+	A = 1;
 	mysql_close(sql);
 	return 1;
 }
