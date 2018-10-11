@@ -33,6 +33,7 @@ enum PI
 
 enum LI
 {
+	Suspect,
 	Players,
 	Activate,
 	Timer,
@@ -44,6 +45,8 @@ new LobbyName[30][MAX_PLOBBY][MAX_PLAYER_NAME];
 new LobbyID[30][MAX_PLOBBY];
 new Priority;
 new PlayerText:MenuTD[MAX_PLAYERS][5];
+new PlayerText:PoliceUI[MAX_PLAYERS][9];
+new PlayerText:RangeUI[MAX_PLAYERS][9];
 
 public OnGameModeInit()
 {
@@ -54,6 +57,8 @@ public OnGameModeInit()
 	Priority = 0;
 	for(new k; k < 30; k++)
 	{
+		LobbyInfo[k][Suspect] = -1;
+		LobbyInfo[k][Timer] = -1;
 		for(new i; i < MAX_PLOBBY; i++)
 		{
 			LobbyID[k][i] = -1;
@@ -84,11 +89,11 @@ public OnPlayerConnect(playerid)
 	cache_get_value_index_int(0, 0, row);
 	if(row == 0)
 	{
-	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "Р РµРіРёСЃС‚СЂР°С†РёСЏ Р¶Рµ", "Р”Р°Р»РµРµ", "РћС‚РјРµРЅР°");
+	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Регистрация же", "Далее", "Отмена");
 	}
 	else
 	{
-		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РЅР° Copchase Server\nР’Р°С€ Р°РєРєР°СѓРЅС‚ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ.\nР§С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ РёРіСЂСѓ, Р’Р°Рј РЅСѓР¶РЅРѕ РІРІРµСЃС‚Рё РїР°СЂРѕР»СЊ,\nРљРѕС‚РѕСЂС‹Р№ Р’С‹ СѓРєР°Р·Р°Р»Рё РїСЂРё СЂРµРіРёСЃС‚СЂР°С†РёРё.", "Р”Р°Р»РµРµ", "РћС‚РјРµРЅР°");
+		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Добро пожаловать на Copchase Server\nВаш аккаунт зарегистрирован.\nЧтобы начать игру, Вам нужно ввести пароль,\nКоторый Вы указали при регистрации.", "Далее", "Отмена");
 	}
 	return 1;
 }
@@ -116,7 +121,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 			    if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
-       				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё. \nР’ РїР°СЂРѕР»Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»РµРµ 6 Рё РјРµРЅРµРµ 20 СЃРёРјРІРѕР»РѕРІ.\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
+       				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации. \nВ пароле должно быть более 6 и менее 20 символов.\nПожалуйста, повторите попытку", "Продолжить", "");
 			    }
 				else
 				{
@@ -130,7 +135,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    case '_': continue;
 						    default:
 						    {
-						    	ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё.\nР’С‹ РІРІРµР»Рё Р·Р°РїСЂРµС‰РµРЅРЅС‹Рµ СЃРёРјРІРѕР»С‹.\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
+						    	ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации.\nВы ввели запрещенные символы.\nПожалуйста, повторите попытку", "Продолжить", "");
 								return 1;
 						    }
 						}
@@ -146,7 +151,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					mysql_query(sql, query);
 					PlayerInfo[playerid][Login] = 1;
 					SetSpawnInfo(playerid, 0,0,0,0,0,0,0,0, 0,0,0,0);
-					//Р•СЃР»Рё С‡РµР»РѕРІРµРє Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°Р»СЃСЏ
+					//Если человек зарегистрировался
 				}
 			}
 			else
@@ -160,7 +165,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    {
 	 			if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
-       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°. \nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
+       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Произошла ошибка. \nПожалуйста, повторите попытку.", "Продолжить", "");
 			    }
 			    else
 				{
@@ -174,7 +179,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    case '_': continue;
 						    default:
 						    {
-						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "Р’С‹ РІРІРµР»Рё Р·Р°РїСЂРµС‰С‘РЅРЅС‹Рµ СЃРёРјРІРѕР»С‹\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
+						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Вы ввели запрещённые символы\nПожалуйста, повторите попытку.", "Продолжить", "");
 								return 1;
 						    }
 						}
@@ -188,9 +193,9 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					cache_get_value_name(0, "Password", password);
 					if(strcmp(password, inputtext, false) != 0)
 					{
-						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "РџР°СЂРѕР»СЊ РІРІРµРґРµРЅ РЅРµРІРµСЂРЅРѕ\nРџРѕР¶Р°СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
+						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Пароль введен неверно\nПожауйста, повторите попытку.", "Продолжить", "");
 					}
-					else // Р§РµР»РѕРІРµРє Р°РІС‚РѕСЂРёР·РѕРІР°Р»СЃСЏ
+					else // Человек авторизовался
 					{
 						SelectTextDraw(playerid, 0xffffffff);
 					    LoadAccount(playerid);
@@ -443,13 +448,13 @@ CMD:veh(playerid, params[])
 {
 	if(PlayerInfo[playerid][Admin] == 0)
 	{
-		SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: СЌС‚Р° РєРѕРјР°РЅРґР° РІР°Рј РЅРµРґРѕСЃС‚СѓРїРЅР°.");
+		SendClientMessage(playerid, 0xFF000000, "Ошибка: эта команда вам недоступна.");
 	}
 	else
 	{
 		new Float:x, Float:y, Float:z, veh, idv;
 		GetPlayerPos(playerid, x, y, z);
-		if(sscanf(params, "d", veh)) return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ id С‚СЂР°РЅСЃРїРѕСЂС‚Р°");
+		if(sscanf(params, "d", veh)) return SendClientMessage(playerid, 0xFF000000, "Ошибка: введите корректный id транспорта");
 		idv = CreateVehicle(veh, x, y, z, 0, 0, 0, 0);
 		SetVehicleVirtualWorld(idv, 1001);
 	}
@@ -465,25 +470,30 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			HideMenuTD(playerid);
 			TogglePlayerControllable(playerid, 1);
 			SetPlayerVirtualWorld(playerid, Priority);
-			if(LobbyInfo[Priority][Activate] == 0) // РµСЃР»Рё Р»РѕР±Р±Рё РЅРµ СЃРѕР·РґР°РЅРѕ
+			if(LobbyInfo[Priority][Activate] == 0) // если лобби не создано
 			{
 				LobbyInfo[Priority][Activate] = 1;
 				GiveSlot(playerid, Priority);
+				CreatePoliceUI(playerid);
+				ShowPoliceUI(playerid);
+				SendClientMessage(playerid, 0xFF000000, "Вы попали в пустое лобби. Ожидайте игроков");
+				SetCameraBehindPlayer(playerid);
+				SetPlayerVirtualWorld(playerid, Priority);
 			}
-			else if(LobbyInfo[Priority][Activate] == 1 || LobbyInfo[Priority][Activate] == 2) // Р•СЃР»Рё Р»РѕР±Р±Рё СЃРѕР·РґР°РЅРѕ Рё РІ РїСЂРѕС†РµСЃСЃРµ РїРѕРёСЃРєР°
+			else if(LobbyInfo[Priority][Activate] == 1 || LobbyInfo[Priority][Activate] == 2) // Если лобби создано и в процессе поиска
 			{
-				if(LobbyInfo[Priority][Players] < 3) // Р•СЃР»Рё РёРіСЂРѕРєРѕРІ РјРµРЅСЊС€Рµ 3
+				if(LobbyInfo[Priority][Players] < 3) // Если игроков меньше 3
 				{
 					GiveSlot(playerid, Priority);
-					if(LobbyInfo[Priority][Players] == 3) // Р•СЃР»Рё РёРіСЂРѕРє РїРѕРґРєР»СЋС‡РёР»СЃСЏ С‚СЂРµС‚СЊРёРј
+					if(LobbyInfo[Priority][Players] == 3) // Если игрок подключился третьим
 					{
-						LobbyInfo[Priority][Timer] = 10; // Р—Р°РґР°РµРј 10 СЃРµРєСѓРЅРґ РґРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р»РѕР±Р±Рё
-						LobbyInfo[Priority][Activate] = 2; // РЎРѕСЃС‚РѕСЏРЅРёРµ Р»РѕР±Р±Рё: Р·Р°РїСѓС‰РµРЅ С‚Р°Р№РјРµСЂ
+						LobbyInfo[Priority][Timer] = 10; // Задаем 10 секунд до подключения к лобби
+						LobbyInfo[Priority][Activate] = 2; // Состояние лобби: запущен таймер
 					}
 				}
 				else
 				{
-					if(LobbyInfo[Priority][Players] + 1 == MAX_PLOBBY) //Р•СЃР»Рё РёРіСЂРѕРє Р·Р°РЅРёРјР°РµС‚ РїРѕСЃР»РµРґРЅРёР№ СЃР»РѕС‚
+					if(LobbyInfo[Priority][Players] + 1 == MAX_PLOBBY) //Если игрок занимает последний слот
 					{
 						GiveSlot(playerid, Priority);
 						new check = 0;
@@ -492,33 +502,35 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 							Priority++;
 							if(Priority == 30) 
 							{
-								if(check < 2) // Р•СЃР»Рё С†РёРєР» РµС‰С‘ РЅРµ РїСЂРѕС€РµР» РєСЂСѓРі
+								if(check < 2) // Если цикл ещё не прошел круг
 								{
 									check++;
 									Priority = 0;
 								}
-								else // Р•СЃР»Рё РєСЂСѓСѓРі РїСЂРѕР№РґРµРЅ Рё РЅРё 1 Р»РѕР±Р±Рё РЅРµ РЅР°Р№РґРµРЅ
+								else // Если крууг пройден и ни 1 лобби не найден
 								{
 									Priority = -1;
 									break;
 								}
 							}
-							if(LobbyInfo[Priority][Players] == MAX_PLOBBY || LobbyInfo[Priority][Activate] > 2) // Р•СЃР»Рё Р»РѕР±Р±Рё Р·Р°РїРѕР»РЅРµРЅРѕ РёР»Рё РёРіСЂР° СѓР¶Рµ РЅР°С‡Р°С‚Р°, РёС‰РµРј СЃР»РµРґСѓСЋС‰РµРµ
+							if(LobbyInfo[Priority][Players] == MAX_PLOBBY || LobbyInfo[Priority][Activate] > 2) // Если лобби заполнено или игра уже начата, ищем следующее
 							{
 								continue;
 							}
-							else if(LobbyInfo[Priority][Players] < MAX_PLOBBY && LobbyInfo[Priority][Activate] < 3) // Р•СЃР»Рё Р»РѕР±Р±Рё РЅРµ Р·Р°РїРѕР»РЅРµРЅРѕ Рё РёРіСЂР° РµС‰С‘ РЅРµ РЅР°С‡Р°С‚Р°, С‚Рѕ
+							else if(LobbyInfo[Priority][Players] < MAX_PLOBBY && LobbyInfo[Priority][Activate] < 3) // Если лобби не заполнено и игра ещё не начата, то
 							{
 								break;
 							}
 						}
 					}
 				}
+				CreatePoliceUI(playerid);
+				ShowPoliceUI(playerid);
 			}
 		}
 		else 
 		{
-			SendClientMessage(playerid, 0xFF000000, "Р’СЃРµ Р»РѕР±Р±Рё Р·Р°РЅСЏС‚С‹, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ РїРѕР·РґРЅРµРµ.");
+			SendClientMessage(playerid, 0xFF000000, "Все лобби заняты, повторите попытку позднее.");
 		}
 	}
 	return 1;
@@ -544,4 +556,53 @@ stock GiveSlot(playerid, lobby)
 		}
 	}
 	LobbyInfo[Priority][Players]++;
+}
+
+stock CreatePoliceUI(playerid)
+{
+	new i = 0;
+	new LB = PlayerInfo[playerid][Lb];
+	for(new k; k < MAX_PLOBBY; k++)
+	{
+		if(LobbyID[LB][k] == playerid) continue;
+		if(LobbyID[LB][k] == -1) continue;
+		if(isnull(LobbyName[LB][k])) continue;
+		if(LobbyID[LB][k] == LobbyInfo[LB][Suspect]) continue;
+		PoliceUI[playerid][i] = CreatePlayerTextDraw(playerid, 470, 230 + 15 * i, "VyacheslavIvankovmas");
+		PlayerTextDrawSetShadow(playerid, PoliceUI[playerid][i], 0);
+		PlayerTextDrawLetterSize(playerid, PoliceUI[playerid][i], 0.2, 0.8);
+		PlayerTextDrawUseBox(playerid, PoliceUI[playerid][i], 1);
+		PlayerTextDrawTextSize(playerid, PoliceUI[playerid][i], 599, 40);
+		PlayerTextDrawBoxColor(playerid, PoliceUI[playerid][i], 0x000000FF);
+		PlayerTextDrawFont(playerid, PoliceUI[playerid][i], 2);
+		PlayerTextDrawShow(playerid, PoliceUI[playerid][i]);
+
+		RangeUI[playerid][i] = CreatePlayerTextDraw(playerid, 600, 230 + 15 * i, "blizko");
+		PlayerTextDrawSetShadow(playerid, RangeUI[playerid][i], 0);
+		PlayerTextDrawLetterSize(playerid, RangeUI[playerid][i], 0.2, 0.8);
+		PlayerTextDrawUseBox(playerid, RangeUI[playerid][i], 1);
+		PlayerTextDrawTextSize(playerid, RangeUI[playerid][i], 640, 40);
+		PlayerTextDrawBoxColor(playerid, RangeUI[playerid][i], 0x000000FF);
+		PlayerTextDrawFont(playerid, RangeUI[playerid][i], 2);
+
+
+		i++;
+	}
+}
+
+stock ShowPoliceUI(playerid)
+{
+	new i = 0;
+	new LB = PlayerInfo[playerid][Lb];
+	for(new k; k < MAX_PLOBBY; k++)
+	{
+		if(LobbyID[LB][k] == playerid) continue;
+		if(LobbyID[LB][k] == -1) continue;
+		if(isnull(LobbyName[LB][k])) continue;
+		if(LobbyID[LB][k] == LobbyInfo[LB][Suspect]) continue;
+		PlayerTextDrawShow(playerid, PoliceUI[playerid][i]);
+		PlayerTextDrawShow(playerid, RangeUI[playerid][i]);
+		i++;
+	}
+
 }
