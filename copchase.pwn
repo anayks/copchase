@@ -15,8 +15,8 @@ main()
 #if defined MAX_PLAYERS
 #undef MAX_PLAYERS
 #endif
-#define MAX_PLAYERS 320
 
+#define MAX_PLAYERS 320
 #define MAX_PLOBBY 2
 #define MAX_LOBBY 30
 
@@ -24,6 +24,9 @@ main()
 #define LOBBY_CREATED 1
 #define LOBBY_WAITING 2
 #define LOBBY_PLAYING 3
+
+#define COLOR_RED 0xFF000000
+#define COLOR_YELLOW 0xee00ee00
 
 new MySQL:sql;
 
@@ -44,10 +47,14 @@ enum PI
 	Kills,
 	Losses,
 	Deaths,
+	Mute,
+	Warn,
+	Score,
 }
 
 enum LI
 {
+	Map,
 	Suspect,
 	Players,
 	Activate,
@@ -69,7 +76,10 @@ new PlayerText:LeftUP[MAX_PLAYERS];
 new PlayerText:SusUI[MAX_PLAYERS];
 new PlayerText:NSusUI[MAX_PLAYERS];
 new HeartBit;
+new BestBit;
 new PlayerVehicle[MAX_PLAYERS];
+new TimeInLobby = 10;
+new TimeInGame = 40;
 
 public OnGameModeInit()
 {
@@ -83,6 +93,7 @@ public OnGameModeInit()
 	{
 		LobbyInfo[k][Suspect] = -1;
 		LobbyInfo[k][Timer] = -1;
+		LobbyInfo[k][Map] = -1;
 		for(new i; i < MAX_PLOBBY; i++)
 		{
 			LobbyID[k][i] = -1;
@@ -99,12 +110,15 @@ public OnGameModeInit()
 		PlayerInfo[i][Admin] = -1;
 	}
 	HeartBit = SetTimer("Bit", 1000, true);
+	BestBit = SetTimer("Piu", 200, true);
 	return 1;
 }
 
 public OnGameModeExit()
 {
     KillTimer(HeartBit);
+    KillTimer(BestBit);
+    mysql_close(sql);
     return 1;
 }
 
@@ -137,6 +151,11 @@ public OnPlayerDisconnect(playerid, reason)
 		DestroyVehicle(PlayerVehicle[playerid]);
 		HideMenuTD(playerid);
 		DestroyMenuTD(playerid);
+		new query[256];
+		new Name[MAX_PLAYER_NAME];
+		Name = GPN(playerid);
+		format(query, 256, "UPDATE `Accounts` SET `Online` = -1 WHERE `Name` = '%s'", Name);
+		mysql_query(sql, query);
 	}
 	if(PlayerInfo[playerid][Lb] > -1) // Если игрок находится в лобби
 	{
@@ -170,6 +189,16 @@ public OnPlayerDisconnect(playerid, reason)
 				Name = GPN(playerid);
 				format(query, 256, "UPDATE `Accounts` SET `Matches` = `Matches` + 1, `Leaves` = `Leaves` + 1, `Online` = -1 WHERE `Name` = '%s'", Name);
 				mysql_query(sql, query);
+				new lobbyid = PlayerInfo[playerid][Lb];
+				PlayerInfo[playerid][Lb] = -1;
+				for(new i; i < MAX_PLOBBY; i++)
+				{
+					if(LobbyID[lobbyid][i] == playerid)
+					{
+						LobbyID[lobbyid][i] = -1;
+						LobbyInfo[lobbyid][Players]--;
+					}
+				}
 			}
 			//Функция очистки лобби
 		}
@@ -183,6 +212,7 @@ public OnPlayerDisconnect(playerid, reason)
 	PlayerInfo[playerid][Lb] 		= -1;
 	PlayerInfo[playerid][Matches] 	= -1;
 	PlayerInfo[playerid][Leaves]	= -1;
+	PlayerInfo[playerid][Mute]		= -1;
 	return 1;
 }
 
@@ -226,7 +256,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					mysql_query(sql, query);
 					PlayerInfo[playerid][Login] = 1;
 					SetSpawnInfo(playerid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-					SetPlayerSkin(playerid, 0);
+					SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
 					CameraMenu(playerid);
 				  	CreateMenuTD(playerid);
 				  	ShowMenuTD(playerid);
@@ -275,13 +305,15 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 					else // Человек авторизовался
 					{
-						format(query, 256, "UPDATE `Accounts` SET `Online` = %i WHERE `Name` = '%s'", playerid, Name);
 						SetSpawnInfo(playerid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+						LoadAccount(playerid);
 						CameraMenu(playerid);
 					  	CreateMenuTD(playerid);
 					  	ShowMenuTD(playerid);
 					  	SendClientMessage(playerid, 0xFF000000, "Вы авторизованы.");
-					  	SetPlayerSkin(playerid, 0);
+					  	format(query, 256, "UPDATE `Accounts` SET `Online` = %i WHERE `Name` = '%s'", playerid, Name);
+						mysql_query(sql, query);
+					  	SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
 					}
 				}
 		    }
@@ -293,12 +325,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 stock CameraMenu(playerid)
 {
 	SelectTextDraw(playerid, 0xffffffff);
-	LoadAccount(playerid);
 	PlayerInfo[playerid][Login] = 1;
 	SetSpawnInfo(playerid, 0,0,0,0,0,0,0,0, 0,0,0,0);
 	SetPlayerCameraPos(playerid, 1627.4650, -1045.1171, 24.8984);
 	SpawnPlayer(playerid);
-	SetPlayerSkin(playerid, 0);
+	SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
 	SetPlayerPos(playerid, 1633.7219, -1045.2396, 23.8984);
 	SetPlayerFacingAngle(playerid, 92.0000);
 	SetPlayerCameraLookAt(playerid, 1637.7219,-1045.2396,23.8984);
@@ -400,6 +431,11 @@ public OnPlayerText(playerid, text[])
 	if(PlayerInfo[playerid][Login] == 0) 
 	{
 		SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не можете отправлять сообщения.");
+		return 0;
+	}
+	if(PlayerInfo[playerid][Mute] > 0)
+	{
+		SendClientMessage(playerid, 0xFF000000, "Ошибка: У вас затычка. Вы не можете отправлять сообщения в чат");
 		return 0;
 	}
 	return 1;
@@ -592,6 +628,78 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			SetVehicleVirtualWorld(PlayerVehicle[playerid], Priority);
 			SetVehicleHealth(PlayerVehicle[playerid], 10000);
 			SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
+			DestroyVehicle(PlayerVehicle[playerid]);
+			for(new i; i < MAX_PLOBBY; i++)
+			{
+				if(LobbyID[Priority][i] == -1)
+				{
+					switch(i)
+					{
+						case 0:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 311.5427,-1809.3197,4.0424,180.2724, 0, 0, -1);
+							SetPlayerPos(playerid, 312.0000,-1812.8839,4.3934);
+							SetPlayerFacingAngle(playerid, 180);
+						}
+						case 1:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 318.2854,-1809.4020,4.2187,180.3335,0,0, -1);
+							SetPlayerPos(playerid, 318.0000,-1812.6407,4.4035);
+							SetPlayerFacingAngle(playerid, 180);
+						}
+						case 2:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 324.6554,-1809.1659,4.2263,179.9251,0,0, -1);
+							SetPlayerPos(playerid, 324.5000,-1812.6407,4.4035);
+							SetPlayerFacingAngle(playerid, 180);
+						}
+						case 3:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 330.9298,-1809.6777,4.2191,179.8994,0,0, -1);
+							SetPlayerPos(playerid, 331.0000,-1812.6407,4.4035);
+							SetPlayerFacingAngle(playerid, 180);
+						}
+						case 4:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 337.3327,-1810.1118,4.2268,179.6051,0,0, -1);
+							SetPlayerPos(playerid, 337.5000,-1812.6407,4.4035);
+							SetPlayerFacingAngle(playerid, 180);
+						}
+						case 5:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 311.6900,-1789.3408,4.3135,0.0370,0,0, -1);
+							SetPlayerPos(playerid, 311.6015,-1785.3176,4.5888);
+							SetPlayerFacingAngle(playerid, 0);
+						}
+						case 6:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 318.1137,-1789.0255,4.4184,358.9895,0,0, -1);
+							SetPlayerPos(playerid, 318.4928,-1785.6693,4.6981);
+							SetPlayerFacingAngle(playerid, 0);
+						}
+						case 7:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 324.6242,-1789.5760,4.5209,0.3305,0, 0, -1);
+							SetPlayerPos(playerid, 324.4236,-1785.7852,4.7931);
+							SetPlayerFacingAngle(playerid, 0);
+						}
+						case 8:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 331.0427,-1789.3031,4.6114,0.8495,0,0, -1);
+							SetPlayerPos(playerid,331.4016,-1785.3527,4.9074);
+							SetPlayerFacingAngle(playerid, 0);
+						}
+						case 9:
+						{
+							PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 337.3922,-1789.3604,4.6535,1.2548,0,0, -1);
+							SetPlayerPos(playerid, 337.3539,-1785.9169,5.0219);
+							SetPlayerFacingAngle(playerid, 0);
+						}
+					}
+					break;
+				}
+			}
+			SetVehicleVirtualWorld(PlayerVehicle[playerid], Priority);
 			if(LobbyInfo[Priority][Activate] == 0) // если лобби не создано
 			{
 				LobbyInfo[Priority][Activate] = 1;
@@ -612,7 +720,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					}
 					if(LobbyInfo[Priority][Players] == 2) // Если игрок подключился третьим
 					{
-						LobbyInfo[Priority][Timer] = 1; // Задаем 10 секунд до подключения к лобби
+						LobbyInfo[Priority][Timer] = TimeInLobby; // Задаем 10 секунд до подключения к лобби
 						SendClientMessage(playerid, 0xFF000000, "Вы подключены");
 						SetPlayerVirtualWorld(playerid, Priority);
 						LobbyInfo[Priority][Activate] = 2; // Состояние лобби: запущен таймер
@@ -757,6 +865,57 @@ stock DestroyPoliceUI(playerid)
 
 public OnPlayerDeath(playerid, killerid, reason)
 {
+	if(PlayerInfo[playerid][Login] < 1)
+	{
+		Kick(playerid);
+		return 1;
+	}
+	if(PlayerInfo[playerid][Lb] > -1) // Если игрок находился в лобби
+	{
+		new lobbyid = PlayerInfo[playerid][Lb];
+		if(LobbyInfo[lobbyid][Suspect] == playerid) // Если игрок - это саспект
+		{
+			for(new i; i < MAX_PLOBBY; i++)
+			{
+				if(LobbyID[lobbyid][i] == -1)
+				{
+					continue;
+				}
+				if(LobbyID[lobbyid][i] == LobbyInfo[lobbyid][Suspect])
+				{
+					continue;
+				}
+				PlayerInfo[LobbyID[lobbyid][i]][Score]++;
+				PlayerInfo[LobbyID[lobbyid][i]][Money]=PlayerInfo[LobbyID[lobbyid][i]][Money]+200;
+				SendClientMessage(LobbyID[lobbyid][i], 0x3300DD00, "Преступник обезврежен!");
+			}
+			EndLobby(lobbyid);
+			return 1;
+		}
+		else // Если игрок - полицай
+		{
+			if(LobbyInfo[lobbyid][Players] > 2) // Если полицейский умер не последним
+			{
+				PlayerInfo[playerid][Lb] = -1;
+				for(new i; i < MAX_PLOBBY; i++)
+				{
+					if(LobbyID[lobbyid][i] == playerid)
+					{
+						LobbyID[lobbyid][i] = -1;
+						LobbyInfo[lobbyid][Players]--;
+						break;
+					}
+				}
+				HideLeftUI(playerid);
+				HidePoliceUI(playerid);
+				DestroyLeftUI(playerid);
+				DestroyPoliceUI(playerid);
+				DestroyVehicle(PlayerVehicle[playerid]);
+				CameraMenu(playerid);
+				ShowMenuTD(playerid);
+			}
+		}
+	}
 	return 1;
 }
 
@@ -864,14 +1023,17 @@ public Bit()
 					CreateLeftUI(LobbyID[i][k]);
 					PlayerTextDrawShow(LobbyID[i][k], LeftUP[LobbyID[i][k]]);
 					ShowLeftUI(LobbyID[i][k]);
+					PutPlayerInVehicle(LobbyID[i][k], PlayerVehicle[LobbyID[i][k]], 0);
 					if(Priority == i) 
 					{
 						SearchPriority();
 					}
 				}
+				PutPlayerInVehicle(LobbyInfo[i][Suspect], PlayerVehicle[LobbyInfo[i][Suspect]], 0);
 				SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Лобби запущено.");
+				LobbyInfo[i][Map] = 0;
 				LobbyInfo[i][Activate] = 3;
-				LobbyInfo[i][Timer] = 10;
+				LobbyInfo[i][Timer] = TimeInGame;
 			}
 
 			/* Если время таймера ещё более 0 */
@@ -895,10 +1057,33 @@ public Bit()
 			{
 				for(new k; k < MAX_PLOBBY; k++)
 				{
+					if(LobbyID[i][k] == LobbyInfo[i][Suspect]) 	continue;
+					if(LobbyID[i][k] == -1)						continue;
 					UpdateLeftUI(LobbyID[i][k]);
 				}
+				UpdateSusUI(LobbyInfo[i][Suspect]);
 				LobbyInfo[i][Timer]--;
 			}
+		}
+	}
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(PlayerInfo[i][Login] == 0)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Mute] == 0)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Mute] > 1)
+		{
+			PlayerInfo[i][Mute]--;
+		}
+		else if(PlayerInfo[i][Mute] == 1)
+		{
+			PlayerInfo[i][Mute]--;
+			SendClientMessage(i, 0xee00ee, "Сервер: С Вас снята затычка. Можете продолжать общение ;)");
 		}
 	}
 	return 1;
@@ -911,16 +1096,21 @@ public EndLobby(lobbyid)
 	{
 		if(LobbyID[lobbyid][i] == -1)		 					continue;
 		if(LobbyID[lobbyid][i] == LobbyInfo[lobbyid][Suspect]) 	continue;
+		DestroyVehicle(PlayerVehicle[LobbyID[lobbyid][i]]);
 		HideLeftUI(LobbyID[lobbyid][i]);
 		DestroyLeftUI(LobbyID[lobbyid][i]);
 		HidePoliceUI(LobbyID[lobbyid][i]);
 		DestroyPoliceUI(LobbyID[lobbyid][i]);
 		CameraMenu(LobbyID[lobbyid][i]);
+		ShowMenuTD(LobbyID[lobbyid][i]);
+		PlayerInfo[LobbyID[lobbyid][i]][Lb]=-1;
 	}
+	DestroyVehicle(PlayerVehicle[LobbyInfo[lobbyid][Suspect]]);
 	HideSusUI(LobbyInfo[lobbyid][Suspect]);
 	DestroySusUI(LobbyInfo[lobbyid][Suspect]);
 	CameraMenu(LobbyInfo[lobbyid][Suspect]);
 	ShowMenuTD(LobbyInfo[lobbyid][Suspect]);
+	PlayerInfo[LobbyInfo[lobbyid][Suspect]][Lb]=-1;
 	for(new i; i < MAX_PLOBBY; i++)
 	{
 		LobbyID[lobbyid][i] = -1;
@@ -931,6 +1121,10 @@ public EndLobby(lobbyid)
 	LobbyInfo[lobbyid][Activate] = 0;
 	LobbyInfo[lobbyid][TextDraws] = 0;
 	LobbyInfo[lobbyid][Players] = 0;
+	if(Priority == -1)
+	{
+		Priority = lobbyid;
+	}
 	return 1;
 }
 
@@ -956,8 +1150,8 @@ CMD:lobby(playerid, params[])
 {
 	if(PlayerInfo[playerid][Login] == 0) return 0;
 	new lid;
-	if(sscanf(params, "i", lid)) return SendClientMessage(playerid, 0xFF000000, "Ошибка, вы ввели некорректный ID лобби");
-	if(lid < 0 || lid > MAX_LOBBY - 1) return SendClientMessage(playerid, 0xFF000000, "Ошибка, вы ввели некорректный ID лобби");
+	if(sscanf(params, "i", lid)) return SendClientMessage(playerid, 0xFF000000, "Ошибка: вы ввели некорректный ID лобби");
+	if(lid < 0 || lid > MAX_LOBBY - 1) return SendClientMessage(playerid, 0xFF000000, "Ошибка: вы ввели некорректный ID лобби");
 	new MSGL[1000];
 	format(MSGL, 1000, "Лобби номер %i \n");
 	new temp[100];
@@ -993,6 +1187,7 @@ CMD:lobby(playerid, params[])
 	strcat(MSGL, temp);
 	format(temp, 100, "\nID подозреваемого: %i", LobbyInfo[lid][Suspect]);
 	strcat(MSGL, temp);
+	format(temp, 100, "\nID карты:\t%i", LobbyInfo[lid][Map]);
 	format(LN, 24, "Лобби №%i", lid);
 	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, LN, MSGL, "Ок", "");
 	return 1;
@@ -1019,7 +1214,7 @@ CMD:check(playerid, params[])
 				}
 			}
 		}
-		format(info, sizeof(info), "Виртуальный мир:\t\t%i\nНомер лобби:\t\t%i\nСлот в лобби:\t\t%i\nМатчей::\t\t\t%i\n", PVW, PlayerLobby, PlayerSlot);
+		format(info, sizeof(info), "Виртуальный мир:\t\t%i\nНомер лобби:\t\t\t%i\nСлот в лобби:\t\t\t%i\nМатчей:\t\t\t%i\n", PVW, PlayerLobby, PlayerSlot);
 		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Ваш чекер", info, "Окей", "");
 		return 1;
 	}
@@ -1160,6 +1355,10 @@ CMD:acommands(playerid)
 		strcat(text, temp);
 		temp = "\n/ainfo [ID игрока]\t\t-\t\t\tПосмотреть информацию об аккаунте";
 		strcat(text, temp);
+		temp = "\n/delveh [ID транспорта]\t-\t\t\tУдалить транспортное средство.";
+		strcat(text, temp);
+		temp = "\n/mute [ID игрока] [время] [причина]\t-\t\t\tВыдать затычку игроку";
+		strcat(text, temp);
 	}
 	if(PlayerInfo[playerid][Admin] > 3)
 	{
@@ -1180,7 +1379,7 @@ public CreateLeftUI(playerid)
 	new Text[200];
 	new name[MAX_PLAYER_NAME];
 	name = GPN(LobbyInfo[PlayerInfo[playerid][Lb]][Suspect]);
-	format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Suspect: %s~n~~n~Minimap: HUISIBLE~n~~n~", LobbyInfo[PlayerInfo[playerid][Lb]][Timer], name);
+	format(Text, 200, "~n~~n~Time remaining: 10 sec~n~~n~Suspect: %s~n~~n~Minimap: HUISIBLE~n~~n~", LobbyInfo[PlayerInfo[playerid][Lb]][Timer], name);
 	LeftUI[playerid] = CreatePlayerTextDraw(playerid, 110, 200, Text);
 	PlayerTextDrawSetShadow(playerid, LeftUI[playerid], 0);
 	PlayerTextDrawUseBox(playerid, LeftUI[playerid], 1);
@@ -1289,28 +1488,28 @@ public CreateSusUI(playerid)
 	new Text[200];
 	new name[MAX_PLAYER_NAME];
 	name = GPN(LobbyInfo[PlayerInfo[playerid][Lb]][Suspect]);
-	format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: %s~n~~n~CAR HP: 1000~n~~n~", LobbyInfo[PlayerInfo[playerid][Lb]][Timer], name);
+	format(Text, 200, "~n~~n~Time remaining: 10 sec~n~~n~Cops remaining: 1~n~~n~CAR HP: 1000~n~~n~");
 	SusUI[playerid] = CreatePlayerTextDraw(playerid, 110, 200, Text);
-	PlayerTextDrawSetShadow(playerid, LeftUI[playerid], 0);
-	PlayerTextDrawUseBox(playerid, LeftUI[playerid], 1);
-	PlayerTextDrawLetterSize(playerid, LeftUI[playerid], 0.25, 1.0);
-	PlayerTextDrawBoxColor(playerid, LeftUI[playerid], 0x000000FF);
-	PlayerTextDrawFont(playerid, LeftUI[playerid], 2);
-	PlayerTextDrawAlignment(playerid, LeftUI[playerid], 2);
-	PlayerTextDrawTextSize(playerid, LeftUI[playerid], 170, 200);
+	PlayerTextDrawSetShadow(playerid, SusUI[playerid], 0);
+	PlayerTextDrawUseBox(playerid, SusUI[playerid], 1);
+	PlayerTextDrawLetterSize(playerid, SusUI[playerid], 0.25, 1.0);
+	PlayerTextDrawBoxColor(playerid, SusUI[playerid], 0x000000FF);
+	PlayerTextDrawFont(playerid, SusUI[playerid], 2);
+	PlayerTextDrawAlignment(playerid, SusUI[playerid], 2);
+	PlayerTextDrawTextSize(playerid, SusUI[playerid], 170, 200);
 
 	new Name[MAX_PLAYER_NAME];
 	Name = GPN(playerid);
 	new text[36];
 	format(text, 36, "~n~%s(%i)~n~~n~", Name, playerid);
 	NSusUI[playerid] = CreatePlayerTextDraw(playerid, 110, 180, text);
-	PlayerTextDrawSetShadow(playerid, LeftUP[playerid], 0);
-	PlayerTextDrawUseBox(playerid, LeftUP[playerid], 1);
-	PlayerTextDrawLetterSize(playerid, LeftUP[playerid], 0.25, 1.0);
-	PlayerTextDrawBoxColor(playerid, LeftUP[playerid], 0xFF1133FF);
-	PlayerTextDrawAlignment(playerid, LeftUP[playerid], 2);
-	PlayerTextDrawFont(playerid, LeftUP[playerid], 2);
-	PlayerTextDrawTextSize(playerid, LeftUP[playerid], 170, 200);
+	PlayerTextDrawSetShadow(playerid, NSusUI[playerid], 0);
+	PlayerTextDrawUseBox(playerid, NSusUI[playerid], 1);
+	PlayerTextDrawLetterSize(playerid, NSusUI[playerid], 0.25, 1.0);
+	PlayerTextDrawBoxColor(playerid, NSusUI[playerid], 0xFF1133FF);
+	PlayerTextDrawAlignment(playerid, NSusUI[playerid], 2);
+	PlayerTextDrawFont(playerid, NSusUI[playerid], 2);
+	PlayerTextDrawTextSize(playerid, NSusUI[playerid], 170, 200);
 	return 1;
 }
 
@@ -1338,6 +1537,26 @@ public DestroySusUI(playerid)
 	return 1;
 }
 
+forward UpdateSusUI(playerid);
+public UpdateSusUI(playerid)
+{
+	new Text[200];
+	new Veh = GetPlayerVehicleID(playerid);
+	new Float:VHP;
+	new PlayerLobby = PlayerInfo[playerid][Lb];
+	if(!IsPlayerInAnyVehicle(playerid)) 
+	{
+		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: 1~n~~n~CAR HP: NOT SEARCHED~n~~n~", LobbyInfo[PlayerLobby][Timer]);
+	}
+	else
+	{
+		GetVehicleHealth(Veh, VHP);
+		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: 1~n~~n~CAR HP: %i~n~~n~", LobbyInfo[PlayerLobby][Timer], floatround(VHP));
+	}
+	PlayerTextDrawSetString(playerid, SusUI[playerid], Text);
+	return 1;
+}
+
 CMD:kick(playerid, params[])
 {
 	if(PlayerInfo[playerid][Login] == 0) 
@@ -1356,6 +1575,14 @@ CMD:kick(playerid, params[])
 	if(sscanf(params, "is", plid, reason)) 
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Введите /kick [ID игрока] [причина]");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
+	}
+	if(PlayerInfo[plid][Login] == 0)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Данный игрок не авторизован.");
 	}
 	if(isnull(reason))
 	{
@@ -1387,6 +1614,228 @@ CMD:kick(playerid, params[])
 	{
 		format(Text, 144, "Администратор %s(%i) кикнул %s(%i). Причина: %s", AName, playerid, KName, plid, reason);
 		SendClientMessage(i, 0xFF000000, Text);
+	}
+	Kick(plid);
+	return 1;
+}
+
+CMD:mute(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0) 	
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 2)		
+	{
+		return SendClientMessage(playerid, 0xFF000000, "У Вас недостаточно прав для использования данной команды.");
+	}
+	new plid, time, reason[256];
+	if(sscanf(params, "iis", plid, time, reason)) 
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: используйте /mute [id] [кол-во минут] [причина]");
+	}
+	if(isnull(reason))
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не ввели причину для мута");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
+	}
+	if(PlayerInfo[plid][Mute] > 0)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: данный игрок уже замьючен.");
+	}
+	if(PlayerInfo[plid][Login] < 1)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: данный игрок не авторизован.");
+	}
+	if(time < 1 || time > 180) 
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: мут не может быть менее 1 и более 180 минут.");
+	}
+	if(strlen(reason) < 2 || strlen(reason) > 32) 
+	{
+		return SendClientMessage(playerid, 0xff000000, "Ошибка: длина причины не может быть менее 2 и более 32 символов.");
+	}
+	for(new i; i < strlen(reason); i++)
+	{
+		switch(reason[i])
+		{
+			case 'A'..'Z': continue;
+			case 'a'..'z': continue;
+			case '0'..'9': continue;
+			case ' ': continue;
+			default: 
+			{
+				return SendClientMessage(playerid, 0xFF000000, "Ошибка: в причине можно использовать только латиницу, цифры и пробелы");
+			}
+		}
+	}
+	new text[144];
+	new AName[MAX_PLAYER_NAME], PName[MAX_PLAYER_NAME];
+	AName = GPN(playerid);
+	PName = GPN(plid);
+	format(text, 144, "Адм. %s выдал мут игроку %s(%i) на %i мин. Причина:%s", AName, PName, plid, time, reason);
+	PlayerInfo[plid][Mute] = time*60;
+	SendClientMessageToAll(0xff220000, text);
+	return 1;
+}
+
+CMD:delveh(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] < 1)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 2)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: У вас недостаточно прав для этой команды");
+	}
+	new veh;
+	if(sscanf(params, "i", veh))
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели некорректный id транспорта");
+	}
+	if(veh < 1 || veh > 2048)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели некорректный id транспорта");
+	}
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(veh == PlayerVehicle[i]) 
+		{
+			return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не можете удалить транспорт игрока");
+		}
+	}
+	if(IsValidVehicle(veh) == 0)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Такой транспорт не существует.");
+	}
+	DestroyVehicle(veh);
+	SendClientMessage(playerid, 0x3300EE, "Транспорт успешно удален.");
+	return 1;
+}
+
+CMD:report(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] < 1) 
+	{
+		return 1;
+	}
+	new text[256];
+	if(sscanf(params, "s", text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(isnull(text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(strlen(text) > 100)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: В репорте должно быть не более 100 символов.");
+	}
+	new m[144];
+	format(m, 144, "%s(%i) в репорт:%s");
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(PlayerInfo[i][Login] < 1)
+		{
+			continue;
+		} 
+		if(PlayerInfo[i][Admin] < 1) 
+		{
+			continue;
+		}
+		SendClientMessage(i, COLOR_YELLOW, m);
+	}
+	SendClientMessage(playerid, COLOR_YELLOW, "Ваш запрос отправлен администрации. Ожидайте ответа!");
+	return 1;
+}
+
+CMD:warn(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)	
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 1) 
+	{
+		return 0;
+	}
+	new plid, text[256];
+	if(sscanf(params, "is", plid, text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели id игрока вне диапазона");
+	}
+	if(isnull(text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(strlen(text) > 16)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: В причине должно быть 16 символов и менее.");
+	}
+	for(new i; i < strlen(text); i++)
+	{
+		switch(text[i])
+		{
+			case 'A'..'Z': continue;
+			case 'a'..'z': continue;
+			case '0'..'9': continue;
+			case ' ': continue;
+			default: 
+			{
+				return SendClientMessage(playerid, 0xFF000000, "Ошибка: в причине можно использовать только латиницу, цифры и пробелы");
+			}
+		}
+	}
+	//Выдача варна
+	if(PlayerInfo[plid][Warn] < 3)
+	{
+		PlayerInfo[plid][Warn]++;
+		new Text[144], AName[MAX_PLAYER_NAME], PName[MAX_PLAYER_NAME];
+		AName = GPN(playerid);
+		PName = GPN(plid);
+		format(Text, 144, "Адм. %s выдал предупреждение %s(%i) %i/3. Причина: %s", AName, PName, plid, PlayerInfo[playerid][Warn], text);
+		for(new i; i < MAX_PLAYERS; i++)
+		{
+			SendClientMessage(i, COLOR_YELLOW, Text);
+		}
+		if(PlayerInfo[plid][Warn] == 3)
+		{
+			Kick(plid);
+		}
+	}
+	return 1;
+}
+
+forward Piu();
+public Piu()
+{
+	for(new k; k < MAX_LOBBY; k++)
+	{
+		new playerid = LobbyInfo[k][Suspect];
+		if(playerid == -1) continue;
+		if(PlayerInfo[playerid][Login] == 0) continue;
+		if(playerid == LobbyInfo[k][Suspect])
+		{
+			UpdateSusUI(playerid);
+		}
+	}
+	return 1;
+}
+
+CMD:pm(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0) 
+	{
+		return 0;
 	}
 	return 1;
 }
