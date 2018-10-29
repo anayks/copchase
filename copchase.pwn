@@ -186,12 +186,12 @@ public OnPlayerConnect(playerid)
 	if(row == 0)
 	{
 		new text[1000];
-		format(text, 1000, "{ffffff}Добро пожаловать на CopChase Project.\nЧтобы начать игру, Вам необходимо зарегистрироваться.\n\nВведите пароль для Вашего аккаунта.\nПри вводе учтите правила, написанные ниже:\n\n\t{009933}Примечание:\n\t- Пароль может состоять из латинских символов, цифр и подчеркиваний.\n\t- Пароль чувствителен к регистру.\n\t- Пароль должен содержать от 6-ти до 20-ти символов.");
-	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", text, "Далее", "Отмена");
+		format(text, 1000, "{ffffff}Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РЅР° CopChase Project.\nР§С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ РёРіСЂСѓ, Р’Р°Рј РЅРµРѕР±С…РѕРґРёРјРѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ.\n\nР’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ РґР»СЏ Р’Р°С€РµРіРѕ Р°РєРєР°СѓРЅС‚Р°.\nРџСЂРё РІРІРѕРґРµ СѓС‡С‚РёС‚Рµ РїСЂР°РІРёР»Р°, РЅР°РїРёСЃР°РЅРЅС‹Рµ РЅРёР¶Рµ:\n\n\t{009933}РџСЂРёРјРµС‡Р°РЅРёРµ:\n\t- РџР°СЂРѕР»СЊ РјРѕР¶РµС‚ СЃРѕСЃС‚РѕСЏС‚СЊ РёР· Р»Р°С‚РёРЅСЃРєРёС… СЃРёРјРІРѕР»РѕРІ, С†РёС„СЂ Рё РїРѕРґС‡РµСЂРєРёРІР°РЅРёР№.\n\t- РџР°СЂРѕР»СЊ С‡СѓРІСЃС‚РІРёС‚РµР»РµРЅ Рє СЂРµРіРёСЃС‚СЂСѓ.\n\t- РџР°СЂРѕР»СЊ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ РѕС‚ 6-С‚Рё РґРѕ 20-С‚Рё СЃРёРјРІРѕР»РѕРІ.");
+	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", text, "Р”Р°Р»РµРµ", "РћС‚РјРµРЅР°");
 	}
 	else
 	{
-		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Добро пожаловать на Copchase Server\nВаш аккаунт зарегистрирован.\nЧтобы начать игру, Вам нужно ввести пароль,\nКоторый Вы указали при регистрации.", "Далее", "Отмена");
+		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РЅР° Copchase Server\nР’Р°С€ Р°РєРєР°СѓРЅС‚ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ.\nР§С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ РёРіСЂСѓ, Р’Р°Рј РЅСѓР¶РЅРѕ РІРІРµСЃС‚Рё РїР°СЂРѕР»СЊ,\nРљРѕС‚РѕСЂС‹Р№ Р’С‹ СѓРєР°Р·Р°Р»Рё РїСЂРё СЂРµРіРёСЃС‚СЂР°С†РёРё.", "Р”Р°Р»РµРµ", "РћС‚РјРµРЅР°");
 	}
 	RemoveBuildingForPlayer(playerid, 3757, 1593.4688, -1368.7344, 32.2500, 0.25);
 	RemoveBuildingForPlayer(playerid, 1290, 1530.5625, -2677.1250, 13.6250, 0.25);
@@ -218,7 +218,7 @@ public OnPlayerDisconnect(playerid, reason)
 		format(query, 256, "UPDATE `Accounts` SET `Online` = -1 WHERE `Name` = '%s'", Name);
 		mysql_query(sql, query);
 	}
-	if(PlayerInfo[playerid][Lb] > -1) // Если игрок находится в лобби
+	if(PlayerInfo[playerid][Lb] > -1) // Р•СЃР»Рё РёРіСЂРѕРє РЅР°С…РѕРґРёС‚СЃСЏ РІ Р»РѕР±Р±Рё
 	{
 		if(LobbyInfo[PlayerInfo[playerid][Lb]][Activate] < 3)
 		{
@@ -236,11 +236,11 @@ public OnPlayerDisconnect(playerid, reason)
 			{
 				HideSusUI(playerid);
 				DestroySusUI(playerid);
-				// Если ливнувший игрок был саспектом
+				// Р•СЃР»Рё Р»РёРІРЅСѓРІС€РёР№ РёРіСЂРѕРє Р±С‹Р» СЃР°СЃРїРµРєС‚РѕРј
 			}
 			else 
 			{
-				//Если игрок полицейский
+				//Р•СЃР»Рё РёРіСЂРѕРє РїРѕР»РёС†РµР№СЃРєРёР№
 				HideLeftUI(playerid);
 				HidePoliceUI(playerid);
 				DestroyPoliceUI(playerid);
@@ -261,7 +261,7 @@ public OnPlayerDisconnect(playerid, reason)
 					}
 				}
 			}
-			//Функция очистки лобби
+			//Р¤СѓРЅРєС†РёСЏ РѕС‡РёСЃС‚РєРё Р»РѕР±Р±Рё
 		}
 	}
 	PlayerInfo[playerid][Skin] 		= -1;
@@ -289,7 +289,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 			    if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
-       				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации. \nВ пароле должно быть более 6 и менее 20 символов.\nПожалуйста, повторите попытку", "Продолжить", "");
+       				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё. \nР’ РїР°СЂРѕР»Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»РµРµ 6 Рё РјРµРЅРµРµ 20 СЃРёРјРІРѕР»РѕРІ.\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
        				PlayerInfo[playerid][Attempts]++;
        				if(PlayerInfo[playerid][Attempts] == 3)
        				{
@@ -308,7 +308,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    case '_': continue;
 						    default:
 						    {
-						    	ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации.\nВы ввели запрещенные символы.\nПожалуйста, повторите попытку", "Продолжить", "");
+						    	ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Р РµРіРёСЃС‚СЂР°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё.\nР’С‹ РІРІРµР»Рё Р·Р°РїСЂРµС‰РµРЅРЅС‹Рµ СЃРёРјРІРѕР»С‹.\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
 						    	PlayerInfo[playerid][Attempts]++;
 			       				if(PlayerInfo[playerid][Attempts] == 3)
 			       				{
@@ -354,7 +354,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    {
 	 			if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
-       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Произошла ошибка. \nПожалуйста, повторите попытку.", "Продолжить", "");
+       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°. \nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
        				PlayerInfo[playerid][Attempts]++;
        				if(PlayerInfo[playerid][Attempts] == 3)
        				{
@@ -373,7 +373,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    case '_': continue;
 						    default:
 						    {
-						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Вы ввели запрещённые символы\nПожалуйста, повторите попытку.", "Продолжить", "");
+						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "Р’С‹ РІРІРµР»Рё Р·Р°РїСЂРµС‰С‘РЅРЅС‹Рµ СЃРёРјРІРѕР»С‹\nРџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
 						    	PlayerInfo[playerid][Attempts]++;
 			       				if(PlayerInfo[playerid][Attempts] == 3)
 			       				{
@@ -392,21 +392,21 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					cache_get_value_name(0, "Password", password);
 					if(strcmp(password, inputtext, false) != 0)
 					{
-						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Пароль введен неверно\nПожауйста, повторите попытку.", "Продолжить", "");
+						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "РђРІС‚РѕСЂРёР·Р°С†РёСЏ", "РџР°СЂРѕР»СЊ РІРІРµРґРµРЅ РЅРµРІРµСЂРЅРѕ\nРџРѕР¶Р°СѓР№СЃС‚Р°, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.", "РџСЂРѕРґРѕР»Р¶РёС‚СЊ", "");
 						PlayerInfo[playerid][Attempts]++;
 	       				if(PlayerInfo[playerid][Attempts] == 3)
 	       				{
 	       					Kick(playerid);
 	       				}
 					}
-					else // Человек авторизовался
+					else // Р§РµР»РѕРІРµРє Р°РІС‚РѕСЂРёР·РѕРІР°Р»СЃСЏ
 					{
 						SetSpawnInfo(playerid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 						LoadAccount(playerid);
 						CameraMenu(playerid);
 					  	CreateMenuTD(playerid);
 					  	ShowMenuTD(playerid);
-					  	SendClientMessage(playerid, 0xFF000000, "Вы авторизованы.");
+					  	SendClientMessage(playerid, 0xFF000000, "Р’С‹ Р°РІС‚РѕСЂРёР·РѕРІР°РЅС‹.");
 					  	format(query, 256, "UPDATE `Accounts` SET `Online` = %i WHERE `Name` = '%s'", playerid, Name);
 						mysql_query(sql, query);
 					  	SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
@@ -527,12 +527,12 @@ public OnPlayerText(playerid, text[])
 {
 	if(PlayerInfo[playerid][Login] == 0) 
 	{
-		SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не можете отправлять сообщения.");
+		SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РѕС‚РїСЂР°РІР»СЏС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ.");
 		return 0;
 	}
 	if(PlayerInfo[playerid][Mute] > 0)
 	{
-		SendClientMessage(playerid, 0xFF000000, "Ошибка: У вас затычка. Вы не можете отправлять сообщения в чат");
+		SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РЈ РІР°СЃ Р·Р°С‚С‹С‡РєР°. Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РѕС‚РїСЂР°РІР»СЏС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ РІ С‡Р°С‚");
 		return 0;
 	}
 	return 1;
@@ -697,13 +697,13 @@ CMD:veh(playerid, params[])
 {
 	if(PlayerInfo[playerid][Admin] == 0)
 	{
-		SendClientMessage(playerid, 0xFF000000, "Ошибка: эта команда вам недоступна.");
+		SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: СЌС‚Р° РєРѕРјР°РЅРґР° РІР°Рј РЅРµРґРѕСЃС‚СѓРїРЅР°.");
 	}
 	else
 	{
 		new Float:x, Float:y, Float:z, veh, idv;
 		GetPlayerPos(playerid, x, y, z);
-		if(sscanf(params, "d", veh)) return SendClientMessage(playerid, 0xFF000000, "Ошибка: введите корректный id транспорта");
+		if(sscanf(params, "d", veh)) return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ id С‚СЂР°РЅСЃРїРѕСЂС‚Р°");
 		idv = CreateVehicle(veh, x, y, z, 0, 0, 0, 0);
 		new vw = GetPlayerVirtualWorld(playerid);
 		SetVehicleVirtualWorld(idv, vw);
@@ -797,30 +797,30 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 				}
 			}
 			SetVehicleVirtualWorld(PlayerVehicle[playerid], Priority);
-			if(LobbyInfo[Priority][Activate] == 0) // если лобби не создано
+			if(LobbyInfo[Priority][Activate] == 0) // РµСЃР»Рё Р»РѕР±Р±Рё РЅРµ СЃРѕР·РґР°РЅРѕ
 			{
 				LobbyInfo[Priority][Activate] = 1;
 				GiveSlot(playerid, Priority);
 				new texts[144];
-				format(texts, 144, "Вы попали в лобби №%i, ожидайте игроков.", Priority);
+				format(texts, 144, "Р’С‹ РїРѕРїР°Р»Рё РІ Р»РѕР±Р±Рё в„–%i, РѕР¶РёРґР°Р№С‚Рµ РёРіСЂРѕРєРѕРІ.", Priority);
 				SendClientMessage(playerid, 0xFF000000, texts);
 				SetPlayerVirtualWorld(playerid, Priority);
 			}
-			else if(LobbyInfo[Priority][Activate] == 1 || LobbyInfo[Priority][Activate] == 2) // Если лобби создано и в процессе поиска
+			else if(LobbyInfo[Priority][Activate] == 1 || LobbyInfo[Priority][Activate] == 2) // Р•СЃР»Рё Р»РѕР±Р±Рё СЃРѕР·РґР°РЅРѕ Рё РІ РїСЂРѕС†РµСЃСЃРµ РїРѕРёСЃРєР°
 			{
-				if(LobbyInfo[Priority][Players] < 3) // Если игроков меньше 3
+				if(LobbyInfo[Priority][Players] < 3) // Р•СЃР»Рё РёРіСЂРѕРєРѕРІ РјРµРЅСЊС€Рµ 3
 				{
 					GiveSlot(playerid, Priority);
 					if(LobbyInfo[Priority][Players] > 2 && LobbyInfo[Priority][Players] < MAX_PLOBBY - 1)
 					{
-						SendClientMessage(playerid, 0xFF000000, "Вы подключены в лобби, в котором уже начат отсчет");
+						SendClientMessage(playerid, 0xFF000000, "Р’С‹ РїРѕРґРєР»СЋС‡РµРЅС‹ РІ Р»РѕР±Р±Рё, РІ РєРѕС‚РѕСЂРѕРј СѓР¶Рµ РЅР°С‡Р°С‚ РѕС‚СЃС‡РµС‚");
 					}
-					if(LobbyInfo[Priority][Players] == 2) // Если игрок подключился третьим
+					if(LobbyInfo[Priority][Players] == 2) // Р•СЃР»Рё РёРіСЂРѕРє РїРѕРґРєР»СЋС‡РёР»СЃСЏ С‚СЂРµС‚СЊРёРј
 					{
-						LobbyInfo[Priority][Timer] = TimeInLobby; // Задаем 10 секунд до подключения к лобби
-						SendClientMessage(playerid, 0xFF000000, "Вы подключены");
+						LobbyInfo[Priority][Timer] = TimeInLobby; // Р—Р°РґР°РµРј 10 СЃРµРєСѓРЅРґ РґРѕ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р»РѕР±Р±Рё
+						SendClientMessage(playerid, 0xFF000000, "Р’С‹ РїРѕРґРєР»СЋС‡РµРЅС‹");
 						SetPlayerVirtualWorld(playerid, Priority);
-						LobbyInfo[Priority][Activate] = 2; // Состояние лобби: запущен таймер
+						LobbyInfo[Priority][Activate] = 2; // РЎРѕСЃС‚РѕСЏРЅРёРµ Р»РѕР±Р±Рё: Р·Р°РїСѓС‰РµРЅ С‚Р°Р№РјРµСЂ
 						for(new i; i < MAX_PLOBBY; i++)
 						{
 							if(LobbyID[Priority][i] == -1) continue;
@@ -831,10 +831,10 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 				}
 				else
 				{
-					if(LobbyInfo[Priority][Players] + 1 == MAX_PLOBBY) //Если игрок занимает последний слот
+					if(LobbyInfo[Priority][Players] + 1 == MAX_PLOBBY) //Р•СЃР»Рё РёРіСЂРѕРє Р·Р°РЅРёРјР°РµС‚ РїРѕСЃР»РµРґРЅРёР№ СЃР»РѕС‚
 					{
 						GiveSlot(playerid, Priority);
-						SendClientMessage(playerid, 0xFF000000, "Вы подключились в лобби последним");
+						SendClientMessage(playerid, 0xFF000000, "Р’С‹ РїРѕРґРєР»СЋС‡РёР»РёСЃСЊ РІ Р»РѕР±Р±Рё РїРѕСЃР»РµРґРЅРёРј");
 						CreateTimerUI(playerid);
 						new check = 0;
 						while(Priority < MAX_LOBBY)
@@ -842,22 +842,22 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 							Priority++;
 							if(Priority == MAX_LOBBY) 
 							{
-								if(check < 2) // Если цикл ещё не прошел круг
+								if(check < 2) // Р•СЃР»Рё С†РёРєР» РµС‰С‘ РЅРµ РїСЂРѕС€РµР» РєСЂСѓРі
 								{
 									check++;
 									Priority = 0;
 								}
-								else // Если круг пройден и ни 1 лобби не найден
+								else // Р•СЃР»Рё РєСЂСѓРі РїСЂРѕР№РґРµРЅ Рё РЅРё 1 Р»РѕР±Р±Рё РЅРµ РЅР°Р№РґРµРЅ
 								{
 									Priority = -1;
 									break;
 								}
 							}
-							if(LobbyInfo[Priority][Players] == MAX_PLOBBY || LobbyInfo[Priority][Activate] > 2) // Если лобби заполнено или игра уже начата, ищем следующее
+							if(LobbyInfo[Priority][Players] == MAX_PLOBBY || LobbyInfo[Priority][Activate] > 2) // Р•СЃР»Рё Р»РѕР±Р±Рё Р·Р°РїРѕР»РЅРµРЅРѕ РёР»Рё РёРіСЂР° СѓР¶Рµ РЅР°С‡Р°С‚Р°, РёС‰РµРј СЃР»РµРґСѓСЋС‰РµРµ
 							{
 								continue;
 							}
-							else if(LobbyInfo[Priority][Players] < MAX_PLOBBY && LobbyInfo[Priority][Activate] < 3) // Если лобби не заполнено и игра ещё не начата, то
+							else if(LobbyInfo[Priority][Players] < MAX_PLOBBY && LobbyInfo[Priority][Activate] < 3) // Р•СЃР»Рё Р»РѕР±Р±Рё РЅРµ Р·Р°РїРѕР»РЅРµРЅРѕ Рё РёРіСЂР° РµС‰С‘ РЅРµ РЅР°С‡Р°С‚Р°, С‚Рѕ
 							{
 								break;
 							}
@@ -868,20 +868,20 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		}
 		else 
 		{
-			SendClientMessage(playerid, 0xFF000000, "Все лобби заняты, повторите попытку позднее.");
+			SendClientMessage(playerid, 0xFF000000, "Р’СЃРµ Р»РѕР±Р±Рё Р·Р°РЅСЏС‚С‹, РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ РїРѕР·РґРЅРµРµ.");
 		}
 	}
 	if(playertextid == MenuTD[playerid][4])
 	{
 		new text[1000];
-		format(text, 1000, "Имя аккаунта:\t\t\t\t\t\t%s (%i id в игре)\nID аккаунта:\t\t\t\t\t\t%i\nДоната в данный момент:\t\t\t\t%i CC\n\nПобед в лобби:\t\t\t\t\t%i\nПоражений в лобби:\t\t\t\t\t%i\nМодель транспорта за подозреваемого:\t\t%i ID\nМодель персонажа за подозреваемого:\t\t%i ID", GPN(playerid), playerid, PlayerInfo[playerid][ID], PlayerInfo[playerid][Donate], PlayerInfo[playerid][Wins], PlayerInfo[playerid][Losses], PlayerInfo[playerid][Vehicle], PlayerInfo[playerid][Skin]);
-		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Статистика аккаунта", text, "Ок", "");
+		format(text, 1000, "РРјСЏ Р°РєРєР°СѓРЅС‚Р°:\t\t\t\t\t\t%s (%i id РІ РёРіСЂРµ)\nID Р°РєРєР°СѓРЅС‚Р°:\t\t\t\t\t\t%i\nР”РѕРЅР°С‚Р° РІ РґР°РЅРЅС‹Р№ РјРѕРјРµРЅС‚:\t\t\t\t%i CC\n\nРџРѕР±РµРґ РІ Р»РѕР±Р±Рё:\t\t\t\t\t%i\nРџРѕСЂР°Р¶РµРЅРёР№ РІ Р»РѕР±Р±Рё:\t\t\t\t\t%i\nРњРѕРґРµР»СЊ С‚СЂР°РЅСЃРїРѕСЂС‚Р° Р·Р° РїРѕРґРѕР·СЂРµРІР°РµРјРѕРіРѕ:\t\t%i ID\nРњРѕРґРµР»СЊ РїРµСЂСЃРѕРЅР°Р¶Р° Р·Р° РїРѕРґРѕР·СЂРµРІР°РµРјРѕРіРѕ:\t\t%i ID", GPN(playerid), playerid, PlayerInfo[playerid][ID], PlayerInfo[playerid][Donate], PlayerInfo[playerid][Wins], PlayerInfo[playerid][Losses], PlayerInfo[playerid][Vehicle], PlayerInfo[playerid][Skin]);
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "РЎС‚Р°С‚РёСЃС‚РёРєР° Р°РєРєР°СѓРЅС‚Р°", text, "РћРє", "");
 	}
 	if(playertextid == MenuTD[playerid][3])
 	{
 		new text[1000];
-		format(text, 1000, "Модель транспорта\tСтоимость\nElegy\t{00ee33}500.000$");
-		ShowPlayerDialog(playerid, 2, DIALOG_STYLE_TABLIST_HEADERS, "Покупка транспортного средства.", text, "Выбор", "Отмена");
+		format(text, 1000, "РњРѕРґРµР»СЊ С‚СЂР°РЅСЃРїРѕСЂС‚Р°\tРЎС‚РѕРёРјРѕСЃС‚СЊ\nElegy\t{00ee33}500.000$");
+		ShowPlayerDialog(playerid, 2, DIALOG_STYLE_TABLIST_HEADERS, "РџРѕРєСѓРїРєР° С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРіРѕ СЃСЂРµРґСЃС‚РІР°.", text, "Р’С‹Р±РѕСЂ", "РћС‚РјРµРЅР°");
 	}
 	return 1;
 }
@@ -979,10 +979,10 @@ public OnPlayerDeath(playerid, killerid, reason)
 		Kick(playerid);
 		return 1;
 	}
-	if(PlayerInfo[playerid][Lb] > -1) // Если игрок находился в лобби
+	if(PlayerInfo[playerid][Lb] > -1) // Р•СЃР»Рё РёРіСЂРѕРє РЅР°С…РѕРґРёР»СЃСЏ РІ Р»РѕР±Р±Рё
 	{
 		new lobbyid = PlayerInfo[playerid][Lb];
-		if(LobbyInfo[lobbyid][Suspect] == playerid) // Если игрок - это саспект
+		if(LobbyInfo[lobbyid][Suspect] == playerid) // Р•СЃР»Рё РёРіСЂРѕРє - СЌС‚Рѕ СЃР°СЃРїРµРєС‚
 		{
 			for(new i; i < MAX_PLOBBY; i++)
 			{
@@ -996,14 +996,14 @@ public OnPlayerDeath(playerid, killerid, reason)
 				}
 				PlayerInfo[LobbyID[lobbyid][i]][Score]++;
 				PlayerInfo[LobbyID[lobbyid][i]][Money]=PlayerInfo[LobbyID[lobbyid][i]][Money]+200;
-				SendClientMessage(LobbyID[lobbyid][i], 0x3300DD00, "Преступник обезврежен!");
+				SendClientMessage(LobbyID[lobbyid][i], 0x3300DD00, "РџСЂРµСЃС‚СѓРїРЅРёРє РѕР±РµР·РІСЂРµР¶РµРЅ!");
 			}
 			EndLobby(lobbyid);
 			return 1;
 		}
-		else // Если игрок - полицай
+		else // Р•СЃР»Рё РёРіСЂРѕРє - РїРѕР»РёС†Р°Р№
 		{
-			if(LobbyInfo[lobbyid][Players] > 2) // Если полицейский умер не последним
+			if(LobbyInfo[lobbyid][Players] > 2) // Р•СЃР»Рё РїРѕР»РёС†РµР№СЃРєРёР№ СѓРјРµСЂ РЅРµ РїРѕСЃР»РµРґРЅРёРј
 			{
 				PlayerInfo[playerid][Lb] = -1;
 				for(new i; i < MAX_PLOBBY; i++)
@@ -1074,31 +1074,31 @@ public Bit()
 	{
 		if(LobbyInfo[i][Activate] == 2)
 		{
-			/* Если не осталось времени */
+			/* Р•СЃР»Рё РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ РІСЂРµРјРµРЅРё */
 			if(LobbyInfo[i][Timer] == 0) 
 			{
 				new CountPlayers;
 				///
 				for(new k; k < MAX_PLOBBY; k++)
 				{
-					if(LobbyID[i][k] == -1) // Если игрок не найден в лобби
+					if(LobbyID[i][k] == -1) // Р•СЃР»Рё РёРіСЂРѕРє РЅРµ РЅР°Р№РґРµРЅ РІ Р»РѕР±Р±Рё
 					{
-						if(isnull(LobbyName[i][k])) continue; //Если имя игрока пустое
-						else if(strlen(LobbyName[i][k]) > 2) //Если имя как-то обнаружилось
+						if(isnull(LobbyName[i][k])) continue; //Р•СЃР»Рё РёРјСЏ РёРіСЂРѕРєР° РїСѓСЃС‚РѕРµ
+						else if(strlen(LobbyName[i][k]) > 2) //Р•СЃР»Рё РёРјСЏ РєР°Рє-С‚Рѕ РѕР±РЅР°СЂСѓР¶РёР»РѕСЃСЊ
 						{
 							LobbyName[i][k] = "";
 							SendException(i, 0);
 							continue;
 						}
 					}
-					else if(LobbyID[i][k] > -1) // Если игрок найден
+					else if(LobbyID[i][k] > -1) // Р•СЃР»Рё РёРіСЂРѕРє РЅР°Р№РґРµРЅ
 					{
-						if(strlen(LobbyName[i][k]) > 2) //Если имя заполнено
+						if(strlen(LobbyName[i][k]) > 2) //Р•СЃР»Рё РёРјСЏ Р·Р°РїРѕР»РЅРµРЅРѕ
 						{
 							CountPlayers++;
 							continue;
 						}
-						else // Если игрок найден, а имя не заполнено
+						else // Р•СЃР»Рё РёРіСЂРѕРє РЅР°Р№РґРµРЅ, Р° РёРјСЏ РЅРµ Р·Р°РїРѕР»РЅРµРЅРѕ
 						{
 							SendException(i, 1);
 							continue;
@@ -1112,7 +1112,7 @@ public Bit()
 					new a = random(MAX_PLOBBY);
 					if(LobbyID[i][a] == -1) continue;
 					LobbyInfo[i][Suspect] = LobbyID[i][a];
-					SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Вы саспект, сосатб");
+					SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Р’С‹ СЃР°СЃРїРµРєС‚, СЃРѕСЃР°С‚Р±");
 					break;
 				}
 				HideTimerUI(LobbyInfo[i][Suspect]);
@@ -1126,7 +1126,7 @@ public Bit()
 					if(isnull(LobbyName[i][k])) continue;
 					CreatePoliceUI(LobbyID[i][k]);
 					ShowPoliceUI(LobbyID[i][k]);
-					SendClientMessage(LobbyID[i][k], 0xFF000000, "Лобби запущено.");
+					SendClientMessage(LobbyID[i][k], 0xFF000000, "Р›РѕР±Р±Рё Р·Р°РїСѓС‰РµРЅРѕ.");
 					HideTimerUI(LobbyID[i][k]);
 					DestroyTimerUI(LobbyID[i][k]);
 					CreateLeftUI(LobbyID[i][k]);
@@ -1404,7 +1404,7 @@ public Bit()
 						}
 					}
 				}
-				SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Лобби запущено.");
+				SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Р›РѕР±Р±Рё Р·Р°РїСѓС‰РµРЅРѕ.");
 				LobbyInfo[i][Map] = 0;
 				LobbyInfo[i][Activate] = 3;
 				LobbyInfo[i][Timer] = TimeInGame;
@@ -1418,7 +1418,7 @@ public Bit()
 				}
 			}
 
-			/* Если время таймера ещё более 0 */
+			/* Р•СЃР»Рё РІСЂРµРјСЏ С‚Р°Р№РјРµСЂР° РµС‰С‘ Р±РѕР»РµРµ 0 */
 			else if(LobbyInfo[i][Timer] > 0)
 			{
 				LobbyInfo[i][Timer]--;
@@ -1429,9 +1429,9 @@ public Bit()
 				}
 			}
 		}
-		else if(LobbyInfo[i][Activate] == 3) // Если игра в лобби идет
+		else if(LobbyInfo[i][Activate] == 3) // Р•СЃР»Рё РёРіСЂР° РІ Р»РѕР±Р±Рё РёРґРµС‚
 		{
-			if(LobbyInfo[i][Timer] == 0) // Если время во время игры в лобби закончилось
+			if(LobbyInfo[i][Timer] == 0) // Р•СЃР»Рё РІСЂРµРјСЏ РІРѕ РІСЂРµРјСЏ РёРіСЂС‹ РІ Р»РѕР±Р±Рё Р·Р°РєРѕРЅС‡РёР»РѕСЃСЊ
 			{
 				EndLobby(i);
 			}
@@ -1465,7 +1465,7 @@ public Bit()
 		else if(PlayerInfo[i][Mute] == 1)
 		{
 			PlayerInfo[i][Mute]--;
-			SendClientMessage(i, 0xee00ee, "Сервер: С Вас снята затычка. Можете продолжать общение ;)");
+			SendClientMessage(i, 0xee00ee, "РЎРµСЂРІРµСЂ: РЎ Р’Р°СЃ СЃРЅСЏС‚Р° Р·Р°С‚С‹С‡РєР°. РњРѕР¶РµС‚Рµ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ РѕР±С‰РµРЅРёРµ ;)");
 		}
 	}
 	return 1;
@@ -1513,7 +1513,7 @@ public EndLobby(lobbyid)
 stock SendException(lobbyid, exc)
 {
 	new texts[144];
-	format(texts, 144, "Произошла ошибка в лобби %i под номером 0x%i. Сообщите об этом разработчику или гл. адм.", lobbyid, exc);
+	format(texts, 144, "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РІ Р»РѕР±Р±Рё %i РїРѕРґ РЅРѕРјРµСЂРѕРј 0x%i. РЎРѕРѕР±С‰РёС‚Рµ РѕР± СЌС‚РѕРј СЂР°Р·СЂР°Р±РѕС‚С‡РёРєСѓ РёР»Рё РіР». Р°РґРј.", lobbyid, exc);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(CheckPlayerAdmin(i)) SendClientMessage(i, 0xFF000000, texts);
@@ -1532,10 +1532,10 @@ CMD:lobby(playerid, params[])
 {
 	if(PlayerInfo[playerid][Login] == 0) return 0;
 	new lid;
-	if(sscanf(params, "i", lid)) return SendClientMessage(playerid, 0xFF000000, "Ошибка: вы ввели некорректный ID лобби");
-	if(lid < 0 || lid > MAX_LOBBY - 1) return SendClientMessage(playerid, 0xFF000000, "Ошибка: вы ввели некорректный ID лобби");
+	if(sscanf(params, "i", lid)) return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІС‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID Р»РѕР±Р±Рё");
+	if(lid < 0 || lid > MAX_LOBBY - 1) return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІС‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID Р»РѕР±Р±Рё");
 	new MSGL[1000];
-	format(MSGL, 1000, "Лобби номер %i \n");
+	format(MSGL, 1000, "Р›РѕР±Р±Рё РЅРѕРјРµСЂ %i \n");
 	new temp[100];
 	for(new i; i < MAX_PLOBBY; i++)
 	{
@@ -1543,35 +1543,35 @@ CMD:lobby(playerid, params[])
 		names = LobbyName[lid][i];
 		if(isnull(names))
 		{
-			names = "Нет имени";
+			names = "РќРµС‚ РёРјРµРЅРё";
 		}
-		format(temp, 100, "%i слот: \t\t%s (%i)\n", i, names, LobbyID[lid][i]);
+		format(temp, 100, "%i СЃР»РѕС‚: \t\t%s (%i)\n", i, names, LobbyID[lid][i]);
 		strcat(MSGL, temp);
 	}
 	if(LobbyInfo[lid][Activate] == 0)
 	{
-		strcat(MSGL, "Лобби ещё не создано");
+		strcat(MSGL, "Р›РѕР±Р±Рё РµС‰С‘ РЅРµ СЃРѕР·РґР°РЅРѕ");
 	}
 	else if(LobbyInfo[lid][Activate] == 1)
 	{
-		strcat(MSGL, "Лобби заполняется");
+		strcat(MSGL, "Р›РѕР±Р±Рё Р·Р°РїРѕР»РЅСЏРµС‚СЃСЏ");
 	}
 	else if(LobbyInfo[lid][Activate] == 2)
 	{
-		strcat(MSGL, "Лобби заполнено и готово к игре");
+		strcat(MSGL, "Р›РѕР±Р±Рё Р·Р°РїРѕР»РЅРµРЅРѕ Рё РіРѕС‚РѕРІРѕ Рє РёРіСЂРµ");
 	}
 	else if(LobbyInfo[lid][Activate] == 3)
 	{
-		strcat(MSGL, "Лобби находится в игре");
+		strcat(MSGL, "Р›РѕР±Р±Рё РЅР°С…РѕРґРёС‚СЃСЏ РІ РёРіСЂРµ");
 	}
 	new LN[24];
-	format(temp, 100, "\nИгроков в лобби: %i", LobbyInfo[lid][Players]);
+	format(temp, 100, "\nРРіСЂРѕРєРѕРІ РІ Р»РѕР±Р±Рё: %i", LobbyInfo[lid][Players]);
 	strcat(MSGL, temp);
-	format(temp, 100, "\nID подозреваемого: %i", LobbyInfo[lid][Suspect]);
+	format(temp, 100, "\nID РїРѕРґРѕР·СЂРµРІР°РµРјРѕРіРѕ: %i", LobbyInfo[lid][Suspect]);
 	strcat(MSGL, temp);
-	format(temp, 100, "\nID карты:\t%i", LobbyInfo[lid][Map]);
-	format(LN, 24, "Лобби №%i", lid);
-	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, LN, MSGL, "Ок", "");
+	format(temp, 100, "\nID РєР°СЂС‚С‹:\t%i", LobbyInfo[lid][Map]);
+	format(LN, 24, "Р›РѕР±Р±Рё в„–%i", lid);
+	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, LN, MSGL, "РћРє", "");
 	return 1;
 } 
 
@@ -1596,11 +1596,11 @@ CMD:check(playerid, params[])
 				}
 			}
 		}
-		format(info, sizeof(info), "Виртуальный мир:\t\t%i\nНомер лобби:\t\t\t%i\nСлот в лобби:\t\t\t%i\nМатчей:\t\t\t%i\n", PVW, PlayerLobby, PlayerSlot);
-		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Ваш чекер", info, "Окей", "");
+		format(info, sizeof(info), "Р’РёСЂС‚СѓР°Р»СЊРЅС‹Р№ РјРёСЂ:\t\t%i\nРќРѕРјРµСЂ Р»РѕР±Р±Рё:\t\t\t%i\nРЎР»РѕС‚ РІ Р»РѕР±Р±Рё:\t\t\t%i\nРњР°С‚С‡РµР№:\t\t\t%i\n", PVW, PlayerLobby, PlayerSlot);
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Р’Р°С€ С‡РµРєРµСЂ", info, "РћРєРµР№", "");
 		return 1;
 	}
-	if(plid < 0 || plid > MAX_PLAYERS - 1) return SendClientMessage(playerid, 0xFF000000, "Вы ввели некорректный ID. Повторите попытку.");
+	if(plid < 0 || plid > MAX_PLAYERS - 1) return SendClientMessage(playerid, 0xFF000000, "Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID. РџРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ.");
 	new info[500];
 	new PVW = GetPlayerVirtualWorld(plid);
 	new PlayerLobby = PlayerInfo[plid][Lb];
@@ -1616,8 +1616,8 @@ CMD:check(playerid, params[])
 			}
 		}
 	}
-	format(info, sizeof(info), "Виртуальный мир: \t\t%i\nНомер лобби: \t\t%i\nСлот в лобби: \t\t%i\nАвторизован: \t\t%i", PVW, PlayerLobby, PlayerSlot, PlayerInfo[plid][Login]);
-	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Ваш чекер", info, "Окей", "");
+	format(info, sizeof(info), "Р’РёСЂС‚СѓР°Р»СЊРЅС‹Р№ РјРёСЂ: \t\t%i\nРќРѕРјРµСЂ Р»РѕР±Р±Рё: \t\t%i\nРЎР»РѕС‚ РІ Р»РѕР±Р±Рё: \t\t%i\nРђРІС‚РѕСЂРёР·РѕРІР°РЅ: \t\t%i", PVW, PlayerLobby, PlayerSlot, PlayerInfo[plid][Login]);
+	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Р’Р°С€ С‡РµРєРµСЂ", info, "РћРєРµР№", "");
 	return 1;
 }
 
@@ -1634,21 +1634,21 @@ CMD:ainfo(playerid, params[])
 	new plid;
 	if(sscanf(params, "i", plid)) 
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: введите /ainfo [ID игрока]");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІРІРµРґРёС‚Рµ /ainfo [ID РёРіСЂРѕРєР°]");
 	}
 	new Name[MAX_PLAYER_NAME];
 	Name = GPN(plid);
 	if(PlayerInfo[plid][Login] == 0)
 	{
 		new Text[200];
-		format(Text, 200, "Имя игрока:\t\t%s\nID игрока:\t\t%i\nСтатус:\t\tНе авторизован.");
-		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Информация об аккаунте", Text, "ок", "");
+		format(Text, 200, "РРјСЏ РёРіСЂРѕРєР°:\t\t%s\nID РёРіСЂРѕРєР°:\t\t%i\nРЎС‚Р°С‚СѓСЃ:\t\tРќРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "РРЅС„РѕСЂРјР°С†РёСЏ РѕР± Р°РєРєР°СѓРЅС‚Рµ", Text, "РѕРє", "");
 	}
 	else
 	{
 		new text[1000];
-		format(text, 1000, "Имя игрока:\t\t\t\t%s\nID игрока:\t\t\t\t%i\nСтатус:\t\t\t\t\tАвторизован\n\nID аккаунта:\t\t\t\t%i\nСыграно матчей:\t\t\t%i\nПокинуто матчей:\t\t\t%i\nМодель транспорта:\t\t\t%i id\nID транспорта на сервере:\t\t%i", Name, plid, PlayerInfo[plid][ID], PlayerInfo[plid][Matches], PlayerInfo[plid][Leaves], PlayerInfo[plid][Vehicle], PlayerVehicle[plid]);
-		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Информация об аккаунте", text, "ок", "");
+		format(text, 1000, "РРјСЏ РёРіСЂРѕРєР°:\t\t\t\t%s\nID РёРіСЂРѕРєР°:\t\t\t\t%i\nРЎС‚Р°С‚СѓСЃ:\t\t\t\t\tРђРІС‚РѕСЂРёР·РѕРІР°РЅ\n\nID Р°РєРєР°СѓРЅС‚Р°:\t\t\t\t%i\nРЎС‹РіСЂР°РЅРѕ РјР°С‚С‡РµР№:\t\t\t%i\nРџРѕРєРёРЅСѓС‚Рѕ РјР°С‚С‡РµР№:\t\t\t%i\nРњРѕРґРµР»СЊ С‚СЂР°РЅСЃРїРѕСЂС‚Р°:\t\t\t%i id\nID С‚СЂР°РЅСЃРїРѕСЂС‚Р° РЅР° СЃРµСЂРІРµСЂРµ:\t\t%i", Name, plid, PlayerInfo[plid][ID], PlayerInfo[plid][Matches], PlayerInfo[plid][Leaves], PlayerInfo[plid][Vehicle], PlayerVehicle[plid]);
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "РРЅС„РѕСЂРјР°С†РёСЏ РѕР± Р°РєРєР°СѓРЅС‚Рµ", text, "РѕРє", "");
 	}
 	return 1;
 }
@@ -1658,11 +1658,11 @@ CMD:alm(playerid, params[])
 	if(PlayerInfo[playerid][Login] == 0) 	return 0;
 	if(PlayerInfo[playerid][Admin] == 0) 	return 0;
 	new lid, ml[100];
-	if(sscanf(params, "is", lid, ml)) 		return SendClientMessage(playerid, 0xFF003300, "Ошибка: Формат /alm [ID лобби] [Text]");
-	if(isnull(ml)) 							return SendClientMessage(playerid, 0xff003300, "Ошибка: Вы не ввели текст.");
-	if(lid < 0 || lid > MAX_LOBBY) 			return SendClientMessage(playerid, 0xFF003300, "Ошибка: Вы ввели некорректный id лобби");
+	if(sscanf(params, "is", lid, ml)) 		return SendClientMessage(playerid, 0xFF003300, "РћС€РёР±РєР°: Р¤РѕСЂРјР°С‚ /alm [ID Р»РѕР±Р±Рё] [Text]");
+	if(isnull(ml)) 							return SendClientMessage(playerid, 0xff003300, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё С‚РµРєСЃС‚.");
+	if(lid < 0 || lid > MAX_LOBBY) 			return SendClientMessage(playerid, 0xFF003300, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id Р»РѕР±Р±Рё");
 	new Message[144];
-	format(Message, 144, "Адм. %s в лобби: %s", GPN(playerid), ml);
+	format(Message, 144, "РђРґРј. %s РІ Р»РѕР±Р±Рё: %s", GPN(playerid), ml);
 	for(new i; i < MAX_PLOBBY; i++)
 	{
 		if(LobbyID[lid][i] == -1) 			continue;
@@ -1686,8 +1686,8 @@ CMD:sinfo(playerid)
 			iter++;
 		}
 		new Text[1000];
-		format(Text, 1000, "Приоритет:\t\t%i\nАвторизовано игроков:\t\t%i\n", Priority, iter);
-		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Информация о сервере", Text, "Ок", "Отмена");
+		format(Text, 1000, "РџСЂРёРѕСЂРёС‚РµС‚:\t\t%i\nРђРІС‚РѕСЂРёР·РѕРІР°РЅРѕ РёРіСЂРѕРєРѕРІ:\t\t%i\n", Priority, iter);
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРµСЂРІРµСЂРµ", Text, "РћРє", "РћС‚РјРµРЅР°");
 		return 1;	
 	}
 }
@@ -1699,10 +1699,10 @@ CMD:setpriority(playerid, params[])
 	else
 	{
 		new pa;
-		if(sscanf(params, "i", pa))			return SendClientMessage(playerid, 0xff000000, "Вы ввели некорректное значение приоритета.");
-		if(pa < 0 || pa > MAX_LOBBY - 1) 	return SendClientMessage(playerid, 0xff000000, "Вы ввели некорректное значение приоритета.");
+		if(sscanf(params, "i", pa))			return SendClientMessage(playerid, 0xff000000, "Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїСЂРёРѕСЂРёС‚РµС‚Р°.");
+		if(pa < 0 || pa > MAX_LOBBY - 1) 	return SendClientMessage(playerid, 0xff000000, "Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїСЂРёРѕСЂРёС‚РµС‚Р°.");
 		new text[144];
-		format(text, 144, "Вы поменяли приоритет с %i на %i", Priority, pa);
+		format(text, 144, "Р’С‹ РїРѕРјРµРЅСЏР»Рё РїСЂРёРѕСЂРёС‚РµС‚ СЃ %i РЅР° %i", Priority, pa);
 		SendClientMessage(playerid, 0xff000000, text);
 		Priority = pa;
 		return 1;
@@ -1715,41 +1715,41 @@ CMD:acommands(playerid)
 	if(PlayerInfo[playerid][Admin] < 1) 	return 0;
 	new text[1000];
 	new temp[228];
-	temp = "/sinfo \t\t\t\t-\t\t\tИнформация о сервере";
+	temp = "/sinfo \t\t\t\t-\t\t\tРРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРµСЂРІРµСЂРµ";
 	strcat(text, temp);
-	temp = "\n/alm [№ лобби] [Текст]\t\t-\t\t\tСказать в лобби от имени администратора";
+	temp = "\n/alm [в„– Р»РѕР±Р±Рё] [РўРµРєСЃС‚]\t\t-\t\t\tРЎРєР°Р·Р°С‚СЊ РІ Р»РѕР±Р±Рё РѕС‚ РёРјРµРЅРё Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°";
 	strcat(text, temp);
-	temp = "\n/veh [ID транспорта]\t\t-\t\t\tСоздать транспортное средство";
+	temp = "\n/veh [ID С‚СЂР°РЅСЃРїРѕСЂС‚Р°]\t\t-\t\t\tРЎРѕР·РґР°С‚СЊ С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРµ СЃСЂРµРґСЃС‚РІРѕ";
 	strcat(text, temp);
-	temp = "\n/check [ID игрока]\t\t-\t\t\tИнформация об игроке";
+	temp = "\n/check [ID РёРіСЂРѕРєР°]\t\t-\t\t\tРРЅС„РѕСЂРјР°С†РёСЏ РѕР± РёРіСЂРѕРєРµ";
 	strcat(text, temp);
-	temp = "\n/lobby [ID лобби]\t\t-\t\t\tИнформация о лобби";
+	temp = "\n/lobby [ID Р»РѕР±Р±Рё]\t\t-\t\t\tРРЅС„РѕСЂРјР°С†РёСЏ Рѕ Р»РѕР±Р±Рё";
 	strcat(text, temp);
-	temp = "\n/kill\t\t\t\t-\t\t\tСамоубийство\n\n";
+	temp = "\n/kill\t\t\t\t-\t\t\tРЎР°РјРѕСѓР±РёР№СЃС‚РІРѕ\n\n";
 	strcat(text, temp);
 	if(PlayerInfo[playerid][Admin] > 1)
 	{
-		temp = "\n/kick [ID игрока] [Причина]\t-\t\t\tКикнуть игрока с указанной причиной";
+		temp = "\n/kick [ID РёРіСЂРѕРєР°] [РџСЂРёС‡РёРЅР°]\t-\t\t\tРљРёРєРЅСѓС‚СЊ РёРіСЂРѕРєР° СЃ СѓРєР°Р·Р°РЅРЅРѕР№ РїСЂРёС‡РёРЅРѕР№";
 		strcat(text, temp);
-		temp = "\n/ainfo [ID игрока]\t\t-\t\t\tПосмотреть информацию об аккаунте";
+		temp = "\n/ainfo [ID РёРіСЂРѕРєР°]\t\t-\t\t\tРџРѕСЃРјРѕС‚СЂРµС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± Р°РєРєР°СѓРЅС‚Рµ";
 		strcat(text, temp);
-		temp = "\n/delveh [ID транспорта]\t-\t\t\tУдалить транспортное средство.";
+		temp = "\n/delveh [ID С‚СЂР°РЅСЃРїРѕСЂС‚Р°]\t-\t\t\tРЈРґР°Р»РёС‚СЊ С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРµ СЃСЂРµРґСЃС‚РІРѕ.";
 		strcat(text, temp);
-		temp = "\n/mute [ID игрока] [время] [причина]\t-\t\t\tВыдать затычку игроку\n\n";
+		temp = "\n/mute [ID РёРіСЂРѕРєР°] [РІСЂРµРјСЏ] [РїСЂРёС‡РёРЅР°]\t-\t\t\tР’С‹РґР°С‚СЊ Р·Р°С‚С‹С‡РєСѓ РёРіСЂРѕРєСѓ\n\n";
 		strcat(text, temp);
 	}
 	if(PlayerInfo[playerid][Admin] > 3)
 	{
-		temp = "\n/setpriority [приоритет]\t\t-\t\t\tУстановить приоритет лобби";
+		temp = "\n/setpriority [РїСЂРёРѕСЂРёС‚РµС‚]\t\t-\t\t\tРЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїСЂРёРѕСЂРёС‚РµС‚ Р»РѕР±Р±Рё";
 		strcat(text, temp);
-		temp = "\n/gmx\t\t\t\t-\t\t\tПерезагрузить сервер полностью";
+		temp = "\n/gmx\t\t\t\t-\t\t\tРџРµСЂРµР·Р°РіСЂСѓР·РёС‚СЊ СЃРµСЂРІРµСЂ РїРѕР»РЅРѕСЃС‚СЊСЋ";
 		strcat(text, temp);
-		temp = "\n/boostlobbies\t\t\t-\t\t\t(отладка для лобби, делает все лобби заполненными кроме последнего)";
+		temp = "\n/boostlobbies\t\t\t-\t\t\t(РѕС‚Р»Р°РґРєР° РґР»СЏ Р»РѕР±Р±Рё, РґРµР»Р°РµС‚ РІСЃРµ Р»РѕР±Р±Рё Р·Р°РїРѕР»РЅРµРЅРЅС‹РјРё РєСЂРѕРјРµ РїРѕСЃР»РµРґРЅРµРіРѕ)";
 		strcat(text, temp);
-		temp = "\n/setadminlevel [id] [level]\t-\t\t\tВЫдать игроку уровень админки.";
+		temp = "\n/setadminlevel [id] [level]\t-\t\t\tР’Р«РґР°С‚СЊ РёРіСЂРѕРєСѓ СѓСЂРѕРІРµРЅСЊ Р°РґРјРёРЅРєРё.";
 		strcat(text, temp);
 	}
-	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Команды", text, "Ок", "");
+	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "РљРѕРјР°РЅРґС‹", text, "РћРє", "");
 	return 1;
 }
 
@@ -1825,7 +1825,7 @@ CMD:gmx(playerid)
 {
 	if(PlayerInfo[playerid][Login] != 1) 	return 0;
 	if(PlayerInfo[playerid][Admin] < 4) 	return 0;
-	SendClientMessage(playerid, 0xFF000000, "Вы перезагрузили сервер.");
+	SendClientMessage(playerid, 0xFF000000, "Р’С‹ РїРµСЂРµР·Р°РіСЂСѓР·РёР»Рё СЃРµСЂРІРµСЂ.");
 	SendRconCommand("gmx");
 	return 1;
 }
@@ -1949,28 +1949,28 @@ CMD:kick(playerid, params[])
 	}
 	if(PlayerInfo[playerid][Admin] == 1)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: у вас недостаточно прав для использования данной функции.");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Сѓ РІР°СЃ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РґР°РЅРЅРѕР№ С„СѓРЅРєС†РёРё.");
 	}
 	new plid, reason[256];
 	if(sscanf(params, "is", plid, reason)) 
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Введите /kick [ID игрока] [причина]");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’РІРµРґРёС‚Рµ /kick [ID РёРіСЂРѕРєР°] [РїСЂРёС‡РёРЅР°]");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: id РёРіСЂРѕРєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ РЅСѓР»СЏ Рё Р±РѕР»СЊС€Рµ 299");
 	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Данный игрок не авторизован.");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р”Р°РЅРЅС‹Р№ РёРіСЂРѕРє РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
 	}
 	if(isnull(reason))
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели некорректную причину");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅСѓСЋ РїСЂРёС‡РёРЅСѓ");
 	}
 	if(strlen(reason) > 32 || strlen(reason) < 2)
 	{
-		return SendClientMessage(playerid, 0xff000000, "Ошибка: причина должна иметь не менее 2 и не более 32 символов.");
+		return SendClientMessage(playerid, 0xff000000, "РћС€РёР±РєР°: РїСЂРёС‡РёРЅР° РґРѕР»Р¶РЅР° РёРјРµС‚СЊ РЅРµ РјРµРЅРµРµ 2 Рё РЅРµ Р±РѕР»РµРµ 32 СЃРёРјРІРѕР»РѕРІ.");
 	}
 	for(new i; i < strlen(reason); i++)
 	{
@@ -1982,7 +1982,7 @@ CMD:kick(playerid, params[])
 			case ' ': continue;
 			default: 
 			{
-				return SendClientMessage(playerid, 0xFF000000, "Ошибка: в причине можно использовать только латиницу, цифры и пробелы");
+				return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІ РїСЂРёС‡РёРЅРµ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ Р»Р°С‚РёРЅРёС†Сѓ, С†РёС„СЂС‹ Рё РїСЂРѕР±РµР»С‹");
 			}
 		}
 	}
@@ -1992,7 +1992,7 @@ CMD:kick(playerid, params[])
 	KName = GPN(plid);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
-		format(Text, 144, "Администратор %s(%i) кикнул %s(%i). Причина: %s", AName, playerid, KName, plid, reason);
+		format(Text, 144, "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ %s(%i) РєРёРєРЅСѓР» %s(%i). РџСЂРёС‡РёРЅР°: %s", AName, playerid, KName, plid, reason);
 		SendClientMessage(i, 0xFF000000, Text);
 	}
 	Kick(plid);
@@ -2007,36 +2007,36 @@ CMD:mute(playerid, params[])
 	}
 	if(PlayerInfo[playerid][Admin] < 2)		
 	{
-		return SendClientMessage(playerid, 0xFF000000, "У Вас недостаточно прав для использования данной команды.");
+		return SendClientMessage(playerid, 0xFF000000, "РЈ Р’Р°СЃ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РґР°РЅРЅРѕР№ РєРѕРјР°РЅРґС‹.");
 	}
 	new plid, time, reason[256];
 	if(sscanf(params, "iis", plid, time, reason)) 
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: используйте /mute [id] [кол-во минут] [причина]");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РёСЃРїРѕР»СЊР·СѓР№С‚Рµ /mute [id] [РєРѕР»-РІРѕ РјРёРЅСѓС‚] [РїСЂРёС‡РёРЅР°]");
 	}
 	if(isnull(reason))
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не ввели причину для мута");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё РїСЂРёС‡РёРЅСѓ РґР»СЏ РјСѓС‚Р°");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: id РёРіСЂРѕРєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅСЊС€Рµ РЅСѓР»СЏ Рё Р±РѕР»СЊС€Рµ 299");
 	}
 	if(PlayerInfo[plid][Mute] > 0)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: данный игрок уже замьючен.");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РґР°РЅРЅС‹Р№ РёРіСЂРѕРє СѓР¶Рµ Р·Р°РјСЊСЋС‡РµРЅ.");
 	}
 	if(PlayerInfo[plid][Login] < 1)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: данный игрок не авторизован.");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РґР°РЅРЅС‹Р№ РёРіСЂРѕРє РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
 	}
 	if(time < 1 || time > 180) 
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: мут не может быть менее 1 и более 180 минут.");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РјСѓС‚ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅРµРµ 1 Рё Р±РѕР»РµРµ 180 РјРёРЅСѓС‚.");
 	}
 	if(strlen(reason) < 2 || strlen(reason) > 32) 
 	{
-		return SendClientMessage(playerid, 0xff000000, "Ошибка: длина причины не может быть менее 2 и более 32 символов.");
+		return SendClientMessage(playerid, 0xff000000, "РћС€РёР±РєР°: РґР»РёРЅР° РїСЂРёС‡РёРЅС‹ РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РјРµРЅРµРµ 2 Рё Р±РѕР»РµРµ 32 СЃРёРјРІРѕР»РѕРІ.");
 	}
 	for(new i; i < strlen(reason); i++)
 	{
@@ -2048,7 +2048,7 @@ CMD:mute(playerid, params[])
 			case ' ': continue;
 			default: 
 			{
-				return SendClientMessage(playerid, 0xFF000000, "Ошибка: в причине можно использовать только латиницу, цифры и пробелы");
+				return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІ РїСЂРёС‡РёРЅРµ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ Р»Р°С‚РёРЅРёС†Сѓ, С†РёС„СЂС‹ Рё РїСЂРѕР±РµР»С‹");
 			}
 		}
 	}
@@ -2056,7 +2056,7 @@ CMD:mute(playerid, params[])
 	new AName[MAX_PLAYER_NAME], PName[MAX_PLAYER_NAME];
 	AName = GPN(playerid);
 	PName = GPN(plid);
-	format(text, 144, "Адм. %s выдал мут игроку %s(%i) на %i мин. Причина:%s", AName, PName, plid, time, reason);
+	format(text, 144, "РђРґРј. %s РІС‹РґР°Р» РјСѓС‚ РёРіСЂРѕРєСѓ %s(%i) РЅР° %i РјРёРЅ. РџСЂРёС‡РёРЅР°:%s", AName, PName, plid, time, reason);
 	PlayerInfo[plid][Mute] = time*60;
 	SendClientMessageToAll(0xff220000, text);
 	return 1;
@@ -2070,30 +2070,30 @@ CMD:delveh(playerid, params[])
 	}
 	if(PlayerInfo[playerid][Admin] < 2)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: У вас недостаточно прав для этой команды");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РЈ РІР°СЃ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РїСЂР°РІ РґР»СЏ СЌС‚РѕР№ РєРѕРјР°РЅРґС‹");
 	}
 	new veh;
 	if(sscanf(params, "i", veh))
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели некорректный id транспорта");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id С‚СЂР°РЅСЃРїРѕСЂС‚Р°");
 	}
 	if(veh < 1 || veh > 2048)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели некорректный id транспорта");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id С‚СЂР°РЅСЃРїРѕСЂС‚Р°");
 	}
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(veh == PlayerVehicle[i]) 
 		{
-			return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не можете удалить транспорт игрока");
+			return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ СѓРґР°Р»РёС‚СЊ С‚СЂР°РЅСЃРїРѕСЂС‚ РёРіСЂРѕРєР°");
 		}
 	}
 	if(IsValidVehicle(veh) == 0)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Такой транспорт не существует.");
+		return SendClientMessage(playerid, 0xFF000000, "РўР°РєРѕР№ С‚СЂР°РЅСЃРїРѕСЂС‚ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.");
 	}
 	DestroyVehicle(veh);
-	SendClientMessage(playerid, 0x3300EE, "Транспорт успешно удален.");
+	SendClientMessage(playerid, 0x3300EE, "РўСЂР°РЅСЃРїРѕСЂС‚ СѓСЃРїРµС€РЅРѕ СѓРґР°Р»РµРЅ.");
 	return 1;
 }
 
@@ -2106,20 +2106,20 @@ CMD:report(playerid, params[])
 	new text[256];
 	if(sscanf(params, "s", text))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё С‚РµРєСЃС‚.");
 	}
 	if(isnull(text))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё С‚РµРєСЃС‚.");
 	}
 	if(strlen(text) > 100)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: В репорте должно быть не более 100 символов.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’ СЂРµРїРѕСЂС‚Рµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РЅРµ Р±РѕР»РµРµ 100 СЃРёРјРІРѕР»РѕРІ.");
 	}
 	new m[144];
 	new PName[MAX_PLAYER_NAME];
 	PName = GPN(playerid);
-	format(m, 144, "%s(%i) в репорт:%s", PName, playerid, text);
+	format(m, 144, "%s(%i) РІ СЂРµРїРѕСЂС‚:%s", PName, playerid, text);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(PlayerInfo[i][Login] < 1)
@@ -2132,7 +2132,7 @@ CMD:report(playerid, params[])
 		}
 		SendClientMessage(i, COLOR_YELLOW, m);
 	}
-	SendClientMessage(playerid, COLOR_YELLOW, "Ваш запрос отправлен администрации. Ожидайте ответа!");
+	SendClientMessage(playerid, COLOR_YELLOW, "Р’Р°С€ Р·Р°РїСЂРѕСЃ РѕС‚РїСЂР°РІР»РµРЅ Р°РґРјРёРЅРёСЃС‚СЂР°С†РёРё. РћР¶РёРґР°Р№С‚Рµ РѕС‚РІРµС‚Р°!");
 	return 1;
 }
 
@@ -2149,19 +2149,19 @@ CMD:warn(playerid, params[])
 	new plid, text[256];
 	if(sscanf(params, "is", plid, text))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё С‚РµРєСЃС‚.");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели id игрока вне диапазона");
+		return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё id РёРіСЂРѕРєР° РІРЅРµ РґРёР°РїР°Р·РѕРЅР°");
 	}
 	if(isnull(text))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё С‚РµРєСЃС‚.");
 	}
 	if(strlen(text) > 16)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: В причине должно быть 16 символов и менее.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’ РїСЂРёС‡РёРЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ 16 СЃРёРјРІРѕР»РѕРІ Рё РјРµРЅРµРµ.");
 	}
 	for(new i; i < strlen(text); i++)
 	{
@@ -2173,18 +2173,18 @@ CMD:warn(playerid, params[])
 			case ' ': continue;
 			default: 
 			{
-				return SendClientMessage(playerid, 0xFF000000, "Ошибка: в причине можно использовать только латиницу, цифры и пробелы");
+				return SendClientMessage(playerid, 0xFF000000, "РћС€РёР±РєР°: РІ РїСЂРёС‡РёРЅРµ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ С‚РѕР»СЊРєРѕ Р»Р°С‚РёРЅРёС†Сѓ, С†РёС„СЂС‹ Рё РїСЂРѕР±РµР»С‹");
 			}
 		}
 	}
-	//Выдача варна
+	//Р’С‹РґР°С‡Р° РІР°СЂРЅР°
 	if(PlayerInfo[plid][Warn] < 3)
 	{
 		PlayerInfo[plid][Warn]++;
 		new Text[144], AName[MAX_PLAYER_NAME], PName[MAX_PLAYER_NAME];
 		AName = GPN(playerid);
 		PName = GPN(plid);
-		format(Text, 144, "Адм. %s выдал предупреждение %s(%i) %i/3. Причина: %s", AName, PName, plid, PlayerInfo[playerid][Warn], text);
+		format(Text, 144, "РђРґРј. %s РІС‹РґР°Р» РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ %s(%i) %i/3. РџСЂРёС‡РёРЅР°: %s", AName, PName, plid, PlayerInfo[playerid][Warn], text);
 		for(new i; i < MAX_PLAYERS; i++)
 		{
 			SendClientMessage(i, COLOR_YELLOW, Text);
@@ -2222,30 +2222,30 @@ CMD:pm(playerid, params[])
 	new plid, text[256];
 	if(sscanf(params, "is", plid, text))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Введите /pm [ID игрока] [Текст].");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’РІРµРґРёС‚Рµ /pm [ID РёРіСЂРѕРєР°] [РўРµРєСЃС‚].");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный ID игрока.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID РёРіСЂРѕРєР°.");
 	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Игрок находится не в сети.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: РРіСЂРѕРє РЅР°С…РѕРґРёС‚СЃСЏ РЅРµ РІ СЃРµС‚Рё.");
 	}
 	if(isnull(text))
 	{
-	 	return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели сообщение.");
+	 	return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё СЃРѕРѕР±С‰РµРЅРёРµ.");
 	}
 	if(strlen(text) > 80)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ СЃР»РёС€РєРѕРј РґР»РёРЅРЅРѕРµ");
 	}
 	new m[144];
 	new OName[MAX_PLAYER_NAME];
 	new PName[MAX_PLAYER_NAME];
 	OName = GPN(playerid);
 	PName = GPN(plid);
-	format(m, 144, "%s(%i) для %s(%i): %s", OName, playerid, PName, plid, text);
+	format(m, 144, "%s(%i) РґР»СЏ %s(%i): %s", OName, playerid, PName, plid, text);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(PlayerInfo[i][Admin] > 1)
@@ -2254,9 +2254,9 @@ CMD:pm(playerid, params[])
 			SendClientMessage(i, COLOR_YELLOW, m);
 		}
 	}
-	format(m, 144, "Вам от %s(%i) в ЛС: %s", OName, playerid, text);
+	format(m, 144, "Р’Р°Рј РѕС‚ %s(%i) РІ Р›РЎ: %s", OName, playerid, text);
 	SendClientMessage(plid, COLOR_YELLOW, m);
-	format(m, 144, "Вы для %s(%i) в ЛС: %s", PName, plid, text);
+	format(m, 144, "Р’С‹ РґР»СЏ %s(%i) РІ Р›РЎ: %s", PName, plid, text);
 	SendClientMessage(playerid, COLOR_YELLOW, m);
 	return 1;
 }
@@ -2269,24 +2269,24 @@ CMD:giveskin(playerid, params[])
 	}
 	if(PlayerInfo[playerid][Admin] < 2)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: РЈ РІР°СЃ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє СЌС‚РѕР№ РєРѕРјР°РЅРґРµ.");
 	}
 	new plid, skin;
 	if(sscanf(params, "ii", plid, skin))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Формат ввода: /skin [ID игрока] [ID скина]");
+		return SendClientMessage(playerid, COLOR_RED, "Р¤РѕСЂРјР°С‚ РІРІРѕРґР°: /skin [ID РёРіСЂРѕРєР°] [ID СЃРєРёРЅР°]");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id игрока.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id РёРіСЂРѕРєР°.");
 	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р”Р°РЅРЅС‹Р№ РёРіСЂРѕРє РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
 	}
 	if(skin < 0 || skin > 311)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id скина.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id СЃРєРёРЅР°.");
 	}
 	SetPlayerSkin(plid, skin);
 	new PName[MAX_PLAYER_NAME];
@@ -2303,19 +2303,19 @@ CMD:giveskin(playerid, params[])
 	if(nskin == skin)
 	{
 		new text[144];
-		format(text, 144, "Сервер: Вы выдали постоянный скин %i игроку %s (%i).", skin, PName, plid);
+		format(text, 144, "РЎРµСЂРІРµСЂ: Р’С‹ РІС‹РґР°Р»Рё РїРѕСЃС‚РѕСЏРЅРЅС‹Р№ СЃРєРёРЅ %i РёРіСЂРѕРєСѓ %s (%i).", skin, PName, plid);
 		SendClientMessage(playerid, COLOR_BLUE, text);
-		format(text, 144, "Администратор %s выдал Вам скин %i id.", AName, skin);
+		format(text, 144, "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ %s РІС‹РґР°Р» Р’Р°Рј СЃРєРёРЅ %i id.", AName, skin);
 		SendClientMessage(plid, COLOR_BLUE, text);
 		PlayerInfo[plid][Skin] = skin;
 	}
 	else
 	{
 		new text[144];
-		SendClientMessage(playerid, COLOR_RED, "Ошибка: Произошла серверная ошибка. Сообщите об этом Главному Администратору.");
-		format(text, 144, "Вы выдали ВРЕМЕННЫЙ скин %i id игроку %s (%i)", skin, PName, plid);
+		SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: РџСЂРѕРёР·РѕС€Р»Р° СЃРµСЂРІРµСЂРЅР°СЏ РѕС€РёР±РєР°. РЎРѕРѕР±С‰РёС‚Рµ РѕР± СЌС‚РѕРј Р“Р»Р°РІРЅРѕРјСѓ РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ.");
+		format(text, 144, "Р’С‹ РІС‹РґР°Р»Рё Р’Р Р•РњР•РќРќР«Р™ СЃРєРёРЅ %i id РёРіСЂРѕРєСѓ %s (%i)", skin, PName, plid);
 		SendClientMessage(playerid, COLOR_BLUE, text);
-		format(text, 144, "Администратор %s выдал Вам ВРЕМЕННЫЙ скин %i id", AName, skin);
+		format(text, 144, "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ %s РІС‹РґР°Р» Р’Р°Рј Р’Р Р•РњР•РќРќР«Р™ СЃРєРёРЅ %i id", AName, skin);
 		SendClientMessage(plid, COLOR_BLUE, text);
 		PlayerInfo[plid][Skin] = skin;
 	}
@@ -2330,24 +2330,24 @@ CMD:setadminlevel(playerid, params[])
 	}
 	if(PlayerInfo[playerid][Admin] < 4)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: РЈ РІР°СЃ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє СЌС‚РѕР№ РєРѕРјР°РЅРґРµ.");
 	}
 	new plid, lvl;
 	if(sscanf(params, "ii", plid, lvl))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Формат ввода: /setadminlevel [ID игрока] [уровень админки]");
+		return SendClientMessage(playerid, COLOR_RED, "Р¤РѕСЂРјР°С‚ РІРІРѕРґР°: /setadminlevel [ID РёРіСЂРѕРєР°] [СѓСЂРѕРІРµРЅСЊ Р°РґРјРёРЅРєРё]");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id игрока.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ id РёРіСЂРѕРєР°.");
 	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р”Р°РЅРЅС‹Р№ РёРіСЂРѕРє РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
 	}
 	if(lvl < 0 || lvl > 3)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете выдать админку выше 3 уровня");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РІС‹РґР°С‚СЊ Р°РґРјРёРЅРєСѓ РІС‹С€Рµ 3 СѓСЂРѕРІРЅСЏ");
 	}
 	new query[256];
 	new PName[MAX_PLAYER_NAME];
@@ -2362,17 +2362,17 @@ CMD:setadminlevel(playerid, params[])
 	cache_get_value_name_int(0, "Admin", nlvl);
 	if(nlvl == lvl)
 	{
-		//Поставил админа
-		format(query, 256, "Вы установили игроку %s(%i) уровень админа %i.", PName, plid, nlvl);
+		//РџРѕСЃС‚Р°РІРёР» Р°РґРјРёРЅР°
+		format(query, 256, "Р’С‹ СѓСЃС‚Р°РЅРѕРІРёР»Рё РёРіСЂРѕРєСѓ %s(%i) СѓСЂРѕРІРµРЅСЊ Р°РґРјРёРЅР° %i.", PName, plid, nlvl);
 		SendClientMessage(playerid, COLOR_BLUE, query);
-		format(query, 256, "Администратор %s выдал Вам %i уровень админа", AName, nlvl);
+		format(query, 256, "РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ %s РІС‹РґР°Р» Р’Р°Рј %i СѓСЂРѕРІРµРЅСЊ Р°РґРјРёРЅР°", AName, nlvl);
 		SendClientMessage(playerid, COLOR_BLUE, query);
 		PlayerInfo[plid][Admin] = nlvl;
 	}
 	else
 	{
-		//Произошла ошибка
-		format(query, 256, "Сервер: произошла некоторая ошибка. Сообщите об этом главному администратору.");
+		//РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°
+		format(query, 256, "РЎРµСЂРІРµСЂ: РїСЂРѕРёР·РѕС€Р»Р° РЅРµРєРѕС‚РѕСЂР°СЏ РѕС€РёР±РєР°. РЎРѕРѕР±С‰РёС‚Рµ РѕР± СЌС‚РѕРј РіР»Р°РІРЅРѕРјСѓ Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂСѓ.");
 		SendClientMessage(playerid, COLOR_RED, query);
 	}
 	return 1;
@@ -2386,11 +2386,11 @@ CMD:amenu(playerid)
 	}
 	if(PlayerInfo[playerid][Admin] < 3)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде!");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: РЈ РІР°СЃ РЅРµС‚ РґРѕСЃС‚СѓРїР° Рє СЌС‚РѕР№ РєРѕРјР°РЅРґРµ!");
 	}
 	new text[200];
-	format(text, 200, "Настройка сервера\tЗначение\nТаймер в лобби\t%i сек\nТаймер игры:\t%i сек", TimeInLobby, TimeInGame);
-	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_TABLIST_HEADERS, "Настройки сервера", text, "Выбор", "Отмена");
+	format(text, 200, "РќР°СЃС‚СЂРѕР№РєР° СЃРµСЂРІРµСЂР°\tР—РЅР°С‡РµРЅРёРµ\nРўР°Р№РјРµСЂ РІ Р»РѕР±Р±Рё\t%i СЃРµРє\nРўР°Р№РјРµСЂ РёРіСЂС‹:\t%i СЃРµРє", TimeInLobby, TimeInGame);
+	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_TABLIST_HEADERS, "РќР°СЃС‚СЂРѕР№РєРё СЃРµСЂРІРµСЂР°", text, "Р’С‹Р±РѕСЂ", "РћС‚РјРµРЅР°");
 	return 1;
 }
 
@@ -2407,41 +2407,41 @@ CMD:an(playerid, params[])
 	new plid, answer[256];
 	if(sscanf(params, "is", plid, answer))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: формат команды - /an [ID игрока] [Текст]");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: С„РѕСЂРјР°С‚ РєРѕРјР°РЅРґС‹ - /an [ID РёРіСЂРѕРєР°] [РўРµРєСЃС‚]");
 	}
 	if(playerid == plid)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете ответить самому себе.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РјРѕР¶РµС‚Рµ РѕС‚РІРµС‚РёС‚СЊ СЃР°РјРѕРјСѓ СЃРµР±Рµ.");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный ID игрока.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РІРІРµР»Рё РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ ID РёРіСЂРѕРєР°.");
 	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р”Р°РЅРЅС‹Р№ РёРіСЂРѕРє РЅРµ Р°РІС‚РѕСЂРёР·РѕРІР°РЅ.");
 	}
 	if(strlen(answer) > 80)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ СЃР»РёС€РєРѕРј РґР»РёРЅРЅРѕРµ.");
 	}
 	if(isnull(answer))
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели ответ."); 
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’С‹ РЅРµ РІРІРµР»Рё РѕС‚РІРµС‚."); 
 	}
 	if(strlen(answer) < 3)
 	{
-		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком короткое.");
+		return SendClientMessage(playerid, COLOR_RED, "РћС€РёР±РєР°: Р’Р°С€Рµ СЃРѕРѕР±С‰РµРЅРёРµ СЃР»РёС€РєРѕРј РєРѕСЂРѕС‚РєРѕРµ.");
 	}
 	new text[144];
 	new PName[MAX_PLAYER_NAME], AName[MAX_PLAYER_NAME];
 	PName = GPN(plid);
 	AName = GPN(playerid);
-	format(text, 144, "Адм. %s Вам: %s", AName, answer);
+	format(text, 144, "РђРґРј. %s Р’Р°Рј: %s", AName, answer);
 	SendClientMessage(plid, COLOR_YELLOW, text);
-	format(text, 144, "Вы для %s: %s", PName, answer);
+	format(text, 144, "Р’С‹ РґР»СЏ %s: %s", PName, answer);
 	SendClientMessage(playerid, COLOR_YELLOW, text);
-	format(text, 144, "Адм. %s для %s (%i): %s", AName, PName, plid, answer);
+	format(text, 144, "РђРґРј. %s РґР»СЏ %s (%i): %s", AName, PName, plid, answer);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(i == playerid)
