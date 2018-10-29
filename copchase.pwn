@@ -64,6 +64,13 @@ enum LI
 	TextDraws,
 }
 
+enum SI
+{
+	TimeInLobby,
+	TimeInGame
+}
+
+new ServerInfo[SI];
 new PlayerInfo[MAX_PLAYERS][PI];
 new LobbyInfo[MAX_LOBBY][LI];
 new LobbyName[MAX_LOBBY][MAX_PLOBBY][MAX_PLAYER_NAME];
@@ -80,8 +87,6 @@ new PlayerText:NSusUI[MAX_PLAYERS];
 new HeartBit;
 new BestBit;
 new PlayerVehicle[MAX_PLAYERS];
-new TimeInLobby = 10;
-new TimeInGame = 40;
 
 public OnGameModeInit()
 {
@@ -111,6 +116,8 @@ public OnGameModeInit()
 		PlayerInfo[i][Skin] = -1;
 		PlayerInfo[i][Admin] = -1;
 	}
+	ServerInfo[TimeInLobby] = 30;
+	ServerInfo[TimeInGame] = 60;
 	HeartBit = SetTimer("Bit", 1000, true);
 	BestBit = SetTimer("Piu", 200, true);
 	CreateDynamicObject(4504, 60.18874, -1532.35376, 6.83591,   0.00000, 0.00000, -5.76000);
@@ -201,7 +208,7 @@ public OnPlayerConnect(playerid)
 	RemoveBuildingForPlayer(playerid, 13785, 1161.3203, -755.0156, 84.8047, 0.25);
 	RemoveBuildingForPlayer(playerid, 4504, 56.3828, -1531.4531, 6.7266, 0.25);
 	InterpolateCameraPos(playerid, 1634.7979,-1169.3313,118.7199, 1622.6156,-1345.4376,130.4928, 10000, CAMERA_CUT);
-	InterpolateCameraLookAt(playerid, 1622.6156,-1345.4376,130.4928,1620.6156,-1360.4376,110.4928, 10000, CAMERA_MOVE);
+	InterpolateCameraLookAt(playerid, 1622.6156,-1345.4376,130.4928,1619.6156,-1380.4376,120.4928, 10000, CAMERA_MOVE);
 	return 1;
 }
 
@@ -413,6 +420,18 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					}
 				}
 		    }
+		}
+		case 3:
+		{
+			if(response)
+			{
+				if(listitem == 0)
+				{
+					new text[200];
+					format(text, 200, "Настройка сервера\tЗначение\nТаймер в лобби\t%i сек\nТаймер игры:\t%i сек", ServerInfo[TimeInLobby], ServerInfo[TimeInGame]);
+					ShowPlayerDialog(playerid, 4, DIALOG_STYLE_TABLIST_HEADERS, "Настройки лобби", text, "Выбор", "Отмена");
+				}
+			}
 		}
 	}
 	return 1;
@@ -817,7 +836,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					}
 					if(LobbyInfo[Priority][Players] == 2) // Если игрок подключился третьим
 					{
-						LobbyInfo[Priority][Timer] = TimeInLobby; // Задаем 10 секунд до подключения к лобби
+						LobbyInfo[Priority][Timer] = ServerInfo[TimeInLobby]; // Задаем 10 секунд до подключения к лобби
 						SendClientMessage(playerid, 0xFF000000, "Вы подключены");
 						SetPlayerVirtualWorld(playerid, Priority);
 						LobbyInfo[Priority][Activate] = 2; // Состояние лобби: запущен таймер
@@ -1407,7 +1426,7 @@ public Bit()
 				SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Лобби запущено.");
 				LobbyInfo[i][Map] = 0;
 				LobbyInfo[i][Activate] = 3;
-				LobbyInfo[i][Timer] = TimeInGame;
+				LobbyInfo[i][Timer] = ServerInfo[TimeInGame];
 				if(LobbyInfo[i][Map] == 0)
 				{
 					for(new k; k < MAX_PLOBBY; k++)
@@ -2119,7 +2138,7 @@ CMD:report(playerid, params[])
 	new m[144];
 	new PName[MAX_PLAYER_NAME];
 	PName = GPN(playerid);
-	format(m, 144, "%s(%i) в репорт:%s", PName, playerid, text);
+	format(m, 144, "%s(%i) в репорт: %s", PName, playerid, text);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(PlayerInfo[i][Login] < 1)
@@ -2132,7 +2151,7 @@ CMD:report(playerid, params[])
 		}
 		SendClientMessage(i, COLOR_YELLOW, m);
 	}
-	SendClientMessage(playerid, COLOR_YELLOW, "Ваш запрос отправлен администрации. Ожидайте ответа!");
+	SendClientMessage(playerid, COLOR_RED, "Ваш запрос отправлен администрации. Ожидайте ответа!");
 	return 1;
 }
 
@@ -2388,9 +2407,7 @@ CMD:amenu(playerid)
 	{
 		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде!");
 	}
-	new text[200];
-	format(text, 200, "Настройка сервера\tЗначение\nТаймер в лобби\t%i сек\nТаймер игры:\t%i сек", TimeInLobby, TimeInGame);
-	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_TABLIST_HEADERS, "Настройки сервера", text, "Выбор", "Отмена");
+	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_LIST, "Меню сервера", "Настройки лобби", "Выбрать", "Отмена");
 	return 1;
 }
 
@@ -2457,6 +2474,96 @@ CMD:an(playerid, params[])
 			continue;
 		}
 		SendClientMessage(i, COLOR_RED, text);
+	}
+	return 1;
+}
+
+CMD:l(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)
+	{
+		return 0;
+	}
+	new text[256];
+	if(PlayerInfo[playerid][Lb] < 0)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не находитесь в лобби.");
+	}
+	if(sscanf(params, "s", text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Формат команды - /l [Текст]");
+	}
+	if(isnull(text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(strlen(text) > 100)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное");
+	}
+	new lobbyid = PlayerInfo[playerid][Lb];
+	new m[144];
+	new PName[MAX_PLAYER_NAME];
+	PName = GPN(playerid);
+	format(m, 144, "%s (%i) в лобби: %s", PName, playerid, text);
+	for(new i; i < MAX_PLOBBY; i++)
+	{
+		if(LobbyID[lobbyid][i] == -1)
+		{
+			continue;
+		}
+		SendClientMessage(LobbyID[lobbyid][i], 0x2EC70000, m);
+	}
+	return 1;
+}
+
+CMD:r(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Lb] < 0)
+	{
+		return 0;
+	}
+	new lobbyid = PlayerInfo[playerid][Lb];
+	if(LobbyInfo[lobbyid][Activate] < 3)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете говорить в рацию");
+	}
+	if(playerid == LobbyInfo[lobbyid][Suspect])
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Подозреваемый не может говорить в рацию");
+	}
+	new text[256];
+	if(sscanf(params, "s", text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: формат команды - /r [Текст]");
+	}
+	if(strlen(text) > 80)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваш сообщение слишком длинное.");
+	}
+	if(isnull(text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели сообщение");
+	}
+	new m[144];
+	new PName[MAX_PLAYER_NAME];
+	PName = GPN(playerid);
+	format(m, 144, "%s (%i)в рацию: %s", PName, playerid, text);
+	for(new i; i < MAX_PLOBBY; i++)
+	{
+		if(LobbyID[lobbyid][i] == -1) 
+		{
+			continue;
+		}
+		if(LobbyInfo[lobbyid][Suspect] == LobbyID[lobbyid][i])
+		{
+			continue;
+		}
+		SendClientMessage(LobbyID[lobbyid][i], 0x003C99FF, m);
 	}
 	return 1;
 }
