@@ -1172,7 +1172,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 1215.0729,-1828.4176,13.1877,182.6918,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 1215.0729,-1828.4176,13.1877,182.6918,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1197,7 +1197,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 1347.4016,-1752.6587,13.1397,0.7036,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 1347.4016,-1752.6587,13.1397,0.7036,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1222,7 +1222,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 1469.5994,-1495.2206,13.3267,91.8238,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 1469.5994,-1495.2206,13.3267,91.8238,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1247,7 +1247,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 1758.0417,-1483.1327,13.3162,266.9442,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 1758.0417,-1483.1327,13.3162,266.9442,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1272,7 +1272,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2118.1333,-1782.9792,13.1673,356.8727,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2118.1333,-1782.9792,13.1673,356.8727,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1297,7 +1297,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2481.6543,-1748.2977,13.3253,2.1950,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2481.6543,-1748.2977,13.3253,2.1950,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1322,7 +1322,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2458.4316,-1351.1938,23.7756,90.0464,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2458.4316,-1351.1938,23.7756,90.0464,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1347,7 +1347,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2750.8398,-1177.9519,69.1831,89.5616,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2750.8398,-1177.9519,69.1831,89.5616,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1372,7 +1372,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2682.1985,-1671.4551,9.2058,180.2605,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2682.1985,-1671.4551,9.2058,180.2605,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
@@ -1397,7 +1397,7 @@ public Bit()
 								else
 								{
 									DestroyVehicle(PlayerVehicle[playerid]);
-									PlayerVehicle[playerid] = CreateVehicle(PlayerVehicle[playerid], 2745.1641,-1944.3124,13.3246,90.3242,0,0, -1);
+									PlayerVehicle[playerid] = CreateVehicle(PlayerInfo[playerid][Vehicle], 2745.1641,-1944.3124,13.3246,90.3242,0,0, -1);
 									PutPlayerInVehicle(playerid, PlayerVehicle[playerid], 0);
 								}
 							}
