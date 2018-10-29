@@ -2393,3 +2393,70 @@ CMD:amenu(playerid)
 	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_TABLIST_HEADERS, "Настройки сервера", text, "Выбор", "Отмена");
 	return 1;
 }
+
+CMD:an(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 1)
+	{
+		return 1;
+	}
+	new plid, answer[256];
+	if(sscanf(params, "is", plid, answer))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: формат команды - /an [ID игрока] [Текст]");
+	}
+	if(playerid == plid)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете ответить самому себе.");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный ID игрока.");
+	}
+	if(PlayerInfo[plid][Login] == 0)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+	}
+	if(strlen(answer) > 80)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное.");
+	}
+	if(isnull(answer))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели ответ."); 
+	}
+	if(strlen(answer) < 3)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком короткое.");
+	}
+	new text[144];
+	new PName[MAX_PLAYER_NAME], AName[MAX_PLAYER_NAME];
+	PName = GPN(plid);
+	AName = GPN(playerid);
+	format(text, 144, "Адм. %s Вам: %s", AName, answer);
+	SendClientMessage(plid, COLOR_YELLOW, text);
+	format(text, 144, "Вы для %s: %s", PName, answer);
+	SendClientMessage(playerid, COLOR_YELLOW, text);
+	format(text, 144, "Адм. %s для %s (%i): %s", AName, PName, plid, answer);
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(i == playerid)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Login] == 0)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Admin] < 1)
+		{
+			continue;
+		}
+		SendClientMessage(i, COLOR_RED, text);
+	}
+	return 1;
+}
