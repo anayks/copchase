@@ -4,7 +4,7 @@
 #include <a_vehicles>
 #include <a_mysql>
 #include <sscanf>
-
+#include <streamer>
 main()
 {
 	print("\n----------------------------------");
@@ -26,7 +26,8 @@ main()
 #define LOBBY_PLAYING 3
 
 #define COLOR_RED 0xFF000000
-#define COLOR_YELLOW 0xee00ee00
+#define COLOR_YELLOW 0xeeee0000
+#define COLOR_BLUE 0x0077FF00
 
 new MySQL:sql;
 
@@ -42,7 +43,6 @@ enum PI
 	Vehicle,
 	Matches, 
 	Leaves,
-	wins,
 	PWins,
 	Kills,
 	Losses,
@@ -50,6 +50,8 @@ enum PI
 	Mute,
 	Warn,
 	Score,
+	Attempts,
+	Wins,
 }
 
 enum LI
@@ -111,6 +113,53 @@ public OnGameModeInit()
 	}
 	HeartBit = SetTimer("Bit", 1000, true);
 	BestBit = SetTimer("Piu", 200, true);
+	CreateDynamicObject(4504, 60.18874, -1532.35376, 6.83591,   0.00000, 0.00000, -5.76000);
+	CreateDynamicObject(978, 163.43134, -1403.72998, 46.40740,   0.00000, 5.00000, 235.00000);
+	CreateDynamicObject(978, 169.27522, -1396.12659, 47.25826,   0.00000, 4.00000, 231.26009);
+	CreateDynamicObject(19972, 165.75171, -1399.22803, 45.47409,   0.00000, 0.00000, 58.08001);
+	CreateDynamicObject(3568, 782.69305, -912.95221, 57.77720,   14.00000, 0.00000, 58.00000);
+	CreateDynamicObject(16439, 790.26508, -930.01837, 43.47972,   -4.00000, 0.00000, 196.00000);
+	CreateDynamicObject(16439, 738.22394, -888.17786, 43.81797,   0.00000, 0.00000, 59.51999);
+	CreateDynamicObject(18225, 1212.73401, -754.83734, 79.07655,   0.00000, 0.00000, -76.80002);
+	CreateDynamicObject(18225, 1117.55151, -765.09766, 86.96117,   0.00000, 0.00000, 58.37998);
+	CreateDynamicObject(18225, 1144.12256, -761.30280, 69.51940,   0.00000, 0.00000, 106.01994);
+	CreateDynamicObject(3578, 1160.32751, -800.51031, 54.66018,   0.00000, 0.00000, 0.36000);
+	CreateDynamicObject(3578, 1149.78882, -800.69733, 54.66018,   0.00000, 0.00000, 0.36000);
+	CreateDynamicObject(18225, 1145.16321, -752.10913, 69.21547,   6.06000, -1.08000, 138.11996);
+	CreateDynamicObject(19950, 1155.17395, -802.60437, 53.30225,   0.00000, 0.00000, -1.44000);
+	CreateDynamicObject(19972, 1153.40686, -802.27588, 53.28902,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(981, 1712.87830, -613.71167, 39.66547,   0.00000, 0.00000, -28.38000);
+	CreateDynamicObject(981, 1712.59082, -609.99280, 39.66547,   0.00000, 0.00000, 149.69989);
+	CreateDynamicObject(4519, 2286.90991, -1118.06641, 27.52838,   0.00000, 5.00000, -90.00000);
+	CreateDynamicObject(981, 2880.33472, -989.59070, 10.74246,   0.00000, 0.00000, -1.68000);
+	CreateDynamicObject(981, 2880.45923, -986.15216, 10.74246,   0.00000, 0.00000, 178.85997);
+	CreateDynamicObject(981, 2842.64038, -1038.45044, 23.31260,   0.00000, 0.00000, 161.04031);
+	CreateDynamicObject(621, 2920.26831, -1393.22034, 8.69464,   348.00000, 75.00000, 185.00000);
+	CreateDynamicObject(621, 2913.71826, -1390.14478, 9.44726,   357.00000, -84.00000, 99.82001);
+	CreateDynamicObject(1423, 2907.02979, -1386.97571, 10.63716,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(1423, 2901.10767, -1387.04663, 10.63716,   0.00000, 0.00000, 2.88000);
+	CreateDynamicObject(1423, 2903.44995, -1418.55530, 10.63716,   0.00000, 0.00000, 2.88000);
+	CreateDynamicObject(1423, 2908.44360, -1418.62854, 10.63716,   0.00000, 0.00000, 2.88000);
+	CreateDynamicObject(1237, 2903.93970, -1386.99792, 9.94540,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(1237, 2905.81787, -1418.14063, 9.94540,   0.00000, 0.00000, 0.00000);
+	CreateDynamicObject(3626, 2158.96729, -2500.90186, 14.90399,   -78.00000, 0.00000, 89.81996);
+	CreateDynamicObject(3567, 2161.64233, -2502.43359, 12.94284,   0.00000, 0.00000, 176.93996);
+	CreateDynamicObject(979, 2159.69092, -2489.49121, 13.12054,   0.00000, 0.00000, -24.78000);
+	CreateDynamicObject(979, 2165.88062, -2496.23608, 13.12054,   0.00000, 0.00000, -66.96001);
+	CreateDynamicObject(979, 2169.58569, -2505.09497, 13.12054,   0.00000, 0.00000, -67.44001);
+	CreateDynamicObject(978, 2159.18481, -2517.56421, 13.06041,   0.00000, 0.00000, 187.43993);
+	CreateDynamicObject(978, 2167.47998, -2513.67725, 13.06041,   0.00000, 0.00000, 225.95985);
+	CreateDynamicObject(1290, 1530.44373, -2671.83472, 8.17315,   -94.00000, 0.00000, 2.00000);
+	CreateDynamicObject(1423, 1536.15576, -2673.32617, 7.92449,   0.00000, 0.00000, 87.65997);
+	CreateDynamicObject(1423, 1536.29187, -2667.79028, 7.92449,   0.00000, 0.00000, 87.65997);
+	CreateDynamicObject(1423, 1525.16052, -2667.56152, 8.50177,   0.00000, 0.00000, 89.81996);
+	CreateDynamicObject(1423, 1525.50354, -2672.77246, 8.50177,   0.00000, 0.00000, 89.81996);
+	CreateDynamicObject(3757, 1594.82715, -1367.89087, 29.18693,   357.00000, 83.00000, -89.24003);
+	CreateDynamicObject(1423, 1598.82117, -1380.45996, 28.30688,   0.00000, 0.00000, 6.36000);
+	CreateDynamicObject(1423, 1593.73303, -1381.00952, 28.30688,   0.00000, 0.00000, 6.36000);
+	CreateDynamicObject(1423, 1589.11719, -1381.47107, 28.30688,   0.00000, 0.00000, 6.36000);
+	CreateDynamicObject(979, 1592.38330, -1364.31226, 28.48394,   0.00000, 0.00000, -17.88000);
+	CreateDynamicObject(979, 1600.89783, -1368.11121, 28.48394,   0.00000, 0.00000, -30.30000);
 	return 1;
 }
 
@@ -132,15 +181,27 @@ public OnPlayerConnect(playerid)
 	format(query, 256, "SELECT COUNT(*) FROM `Accounts` WHERE `Name` = '%s'", Name);
 	mysql_query(sql, query);
 	new row;
+	PlayerInfo[playerid][Warn] = 0;
 	cache_get_value_index_int(0, 0, row);
 	if(row == 0)
 	{
-	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Регистрация же", "Далее", "Отмена");
+		new text[1000];
+		format(text, 1000, "{ffffff}Добро пожаловать на CopChase Project.\nЧтобы начать игру, Вам необходимо зарегистрироваться.\n\nВведите пароль для Вашего аккаунта.\nПри вводе учтите правила, написанные ниже:\n\n\t{009933}Примечание:\n\t- Пароль может состоять из латинских символов, цифр и подчеркиваний.\n\t- Пароль чувствителен к регистру.\n\t- Пароль должен содержать от 6-ти до 20-ти символов.");
+	    ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", text, "Далее", "Отмена");
 	}
 	else
 	{
 		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Добро пожаловать на Copchase Server\nВаш аккаунт зарегистрирован.\nЧтобы начать игру, Вам нужно ввести пароль,\nКоторый Вы указали при регистрации.", "Далее", "Отмена");
 	}
+	RemoveBuildingForPlayer(playerid, 3757, 1593.4688, -1368.7344, 32.2500, 0.25);
+	RemoveBuildingForPlayer(playerid, 1290, 1530.5625, -2677.1250, 13.6250, 0.25);
+	RemoveBuildingForPlayer(playerid, 621, 2913.8750, -1389.0859, 7.3594, 0.25);
+	RemoveBuildingForPlayer(playerid, 621, 2915.0156, -1392.9141, 6.4375, 0.25);
+	RemoveBuildingForPlayer(playerid, 13717, 1161.3203, -755.0156, 84.8047, 0.25);
+	RemoveBuildingForPlayer(playerid, 13785, 1161.3203, -755.0156, 84.8047, 0.25);
+	RemoveBuildingForPlayer(playerid, 4504, 56.3828, -1531.4531, 6.7266, 0.25);
+	InterpolateCameraPos(playerid, 1634.7979,-1169.3313,118.7199, 1622.6156,-1345.4376,130.4928, 10000, CAMERA_CUT);
+	InterpolateCameraLookAt(playerid, 1622.6156,-1345.4376,130.4928,1620.6156,-1360.4376,110.4928, 10000, CAMERA_MOVE);
 	return 1;
 }
 
@@ -213,6 +274,8 @@ public OnPlayerDisconnect(playerid, reason)
 	PlayerInfo[playerid][Matches] 	= -1;
 	PlayerInfo[playerid][Leaves]	= -1;
 	PlayerInfo[playerid][Mute]		= -1;
+	PlayerInfo[playerid][Warn]		= -1;
+	PlayerInfo[playerid][Attempts] 	= -1;
 	return 1;
 }
 
@@ -227,6 +290,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			    if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
        				ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации. \nВ пароле должно быть более 6 и менее 20 символов.\nПожалуйста, повторите попытку", "Продолжить", "");
+       				PlayerInfo[playerid][Attempts]++;
+       				if(PlayerInfo[playerid][Attempts] == 3)
+       				{
+       					Kick(playerid);
+       				}
 			    }
 				else
 				{
@@ -241,6 +309,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    default:
 						    {
 						    	ShowPlayerDialog(playerid, 0, DIALOG_STYLE_INPUT, "Регистрация", "Произошла ошибка регистрации.\nВы ввели запрещенные символы.\nПожалуйста, повторите попытку", "Продолжить", "");
+						    	PlayerInfo[playerid][Attempts]++;
+			       				if(PlayerInfo[playerid][Attempts] == 3)
+			       				{
+			       					Kick(playerid);
+			       				}
 								return 1;
 						    }
 						}
@@ -252,14 +325,22 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					mysql_query(sql, query);
 					new rows;
 					cache_get_value_index_int(0, 0, rows);
-					format(query, 256, "INSERT INTO `Accounts` (`ID`, `Name`, `Password`, `Admin`, `Money`, `Donate`, `Online`) VALUES ('%i', '%s', '%s', '0', '0', '0', '1')", rows, Name, inputtext);
+					new a = random(3);
+					switch(a)
+					{
+						case 0: PlayerInfo[playerid][Skin] = 3;
+						case 1: PlayerInfo[playerid][Skin] = 6;
+						case 2: PlayerInfo[playerid][Skin] = 8;
+					}
+					format(query, 256, "INSERT INTO `Accounts` (`ID`, `Name`, `Password`, `Admin`, `Money`, `Donate`, `Online`, `Skin`) VALUES ('%i', '%s', '%s', '0', '0', '0', '1', '%i')", rows, Name, inputtext, PlayerInfo[playerid][Skin]);
 					mysql_query(sql, query);
 					PlayerInfo[playerid][Login] = 1;
 					SetSpawnInfo(playerid, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 					SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
+					PlayerInfo[playerid][Vehicle] = 614;
 					CameraMenu(playerid);
 				  	CreateMenuTD(playerid);
-				  	ShowMenuTD(playerid);
+				  	ShowMenuTD(playerid); 
 				}
 			}
 			else
@@ -274,6 +355,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	 			if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
        				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Произошла ошибка. \nПожалуйста, повторите попытку.", "Продолжить", "");
+       				PlayerInfo[playerid][Attempts]++;
+       				if(PlayerInfo[playerid][Attempts] == 3)
+       				{
+       					Kick(playerid);
+       				}
 			    }
 			    else
 				{
@@ -288,6 +374,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    default:
 						    {
 						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Вы ввели запрещённые символы\nПожалуйста, повторите попытку.", "Продолжить", "");
+						    	PlayerInfo[playerid][Attempts]++;
+			       				if(PlayerInfo[playerid][Attempts] == 3)
+			       				{
+			       					Kick(playerid);
+			       				}
 								return 1;
 						    }
 						}
@@ -302,6 +393,11 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					if(strcmp(password, inputtext, false) != 0)
 					{
 						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Пароль введен неверно\nПожауйста, повторите попытку.", "Продолжить", "");
+						PlayerInfo[playerid][Attempts]++;
+	       				if(PlayerInfo[playerid][Attempts] == 3)
+	       				{
+	       					Kick(playerid);
+	       				}
 					}
 					else // Человек авторизовался
 					{
@@ -324,6 +420,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 stock CameraMenu(playerid)
 {
+	SetPlayerWorldBounds(playerid, 20000, -20000, 20000, -20000);
 	SelectTextDraw(playerid, 0xffffffff);
 	PlayerInfo[playerid][Login] = 1;
 	SetSpawnInfo(playerid, 0,0,0,0,0,0,0,0, 0,0,0,0);
@@ -774,6 +871,18 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			SendClientMessage(playerid, 0xFF000000, "Все лобби заняты, повторите попытку позднее.");
 		}
 	}
+	if(playertextid == MenuTD[playerid][4])
+	{
+		new text[1000];
+		format(text, 1000, "Имя аккаунта:\t\t\t\t\t\t%s (%i id в игре)\nID аккаунта:\t\t\t\t\t\t%i\nДоната в данный момент:\t\t\t\t%i CC\n\nПобед в лобби:\t\t\t\t\t%i\nПоражений в лобби:\t\t\t\t\t%i\nМодель транспорта за подозреваемого:\t\t%i ID\nМодель персонажа за подозреваемого:\t\t%i ID", GPN(playerid), playerid, PlayerInfo[playerid][ID], PlayerInfo[playerid][Donate], PlayerInfo[playerid][Wins], PlayerInfo[playerid][Losses], PlayerInfo[playerid][Vehicle], PlayerInfo[playerid][Skin]);
+		ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Статистика аккаунта", text, "Ок", "");
+	}
+	if(playertextid == MenuTD[playerid][3])
+	{
+		new text[1000];
+		format(text, 1000, "Модель транспорта\tСтоимость\nElegy\t{00ee33}500.000$");
+		ShowPlayerDialog(playerid, 2, DIALOG_STYLE_TABLIST_HEADERS, "Покупка транспортного средства.", text, "Выбор", "Отмена");
+	}
 	return 1;
 }
 
@@ -1030,10 +1139,67 @@ public Bit()
 					}
 				}
 				PutPlayerInVehicle(LobbyInfo[i][Suspect], PlayerVehicle[LobbyInfo[i][Suspect]], 0);
+				new pl = LobbyInfo[i][TextDraws] + 1;
+				new ZANYATO[MAX_PLOBBY];
+				for(new k; k < MAX_PLOBBY; k++)
+				{
+					new q = random(pl);
+					switch(q)
+					{
+						case 0: 
+						{
+
+						}
+						case 1:
+						{
+
+						}
+						case 2:
+						{
+
+						}
+						case 3:
+						{
+
+						}
+						case 4:
+						{
+
+						}
+						case 5:
+						{
+
+						}
+						case 6:
+						{
+
+						}
+						case 7:
+						{
+
+						}
+						case 8:
+						{
+
+						}
+						case 9:
+						{
+
+						}
+					}
+				}
 				SendClientMessage(LobbyInfo[i][Suspect], 0xFF000000, "Лобби запущено.");
 				LobbyInfo[i][Map] = 0;
 				LobbyInfo[i][Activate] = 3;
 				LobbyInfo[i][Timer] = TimeInGame;
+				if(LobbyInfo[i][Map] == 0)
+				{
+					for(new k; k < MAX_PLOBBY; k++)
+					{
+						if(LobbyID[i][k] == -1) continue;
+						SetPlayerWorldBounds(LobbyID[i][k], 2923.8906, 112.1450, -954.2859, -2718.8538);
+					}
+				}
 			}
 
 			/* Если время таймера ещё более 0 */
@@ -1249,10 +1415,6 @@ CMD:ainfo(playerid, params[])
 	{
 		return 0;
 	}
-	if(PlayerInfo[playerid][Lb] > -1)
-	{
-		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы не можете смотреть информацию во время игры");
-	}
 	new plid;
 	if(sscanf(params, "i", plid)) 
 	{
@@ -1336,7 +1498,7 @@ CMD:acommands(playerid)
 	if(PlayerInfo[playerid][Login] == 0) 	return 0;
 	if(PlayerInfo[playerid][Admin] < 1) 	return 0;
 	new text[1000];
-	new temp[140];
+	new temp[228];
 	temp = "/sinfo \t\t\t\t-\t\t\tИнформация о сервере";
 	strcat(text, temp);
 	temp = "\n/alm [№ лобби] [Текст]\t\t-\t\t\tСказать в лобби от имени администратора";
@@ -1347,7 +1509,7 @@ CMD:acommands(playerid)
 	strcat(text, temp);
 	temp = "\n/lobby [ID лобби]\t\t-\t\t\tИнформация о лобби";
 	strcat(text, temp);
-	temp = "\n/kill\t\t\t\t-\t\t\tСамоубийство";
+	temp = "\n/kill\t\t\t\t-\t\t\tСамоубийство\n\n";
 	strcat(text, temp);
 	if(PlayerInfo[playerid][Admin] > 1)
 	{
@@ -1357,7 +1519,7 @@ CMD:acommands(playerid)
 		strcat(text, temp);
 		temp = "\n/delveh [ID транспорта]\t-\t\t\tУдалить транспортное средство.";
 		strcat(text, temp);
-		temp = "\n/mute [ID игрока] [время] [причина]\t-\t\t\tВыдать затычку игроку";
+		temp = "\n/mute [ID игрока] [время] [причина]\t-\t\t\tВыдать затычку игроку\n\n";
 		strcat(text, temp);
 	}
 	if(PlayerInfo[playerid][Admin] > 3)
@@ -1367,6 +1529,8 @@ CMD:acommands(playerid)
 		temp = "\n/gmx\t\t\t\t-\t\t\tПерезагрузить сервер полностью";
 		strcat(text, temp);
 		temp = "\n/boostlobbies\t\t\t-\t\t\t(отладка для лобби, делает все лобби заполненными кроме последнего)";
+		strcat(text, temp);
+		temp = "\n/setadminlevel [id] [level]\t-\t\t\tВЫдать игроку уровень админки.";
 		strcat(text, temp);
 	}
 	ShowPlayerDialog(playerid, 32000, DIALOG_STYLE_MSGBOX, "Команды", text, "Ок", "");
@@ -1502,7 +1666,7 @@ public CreateSusUI(playerid)
 	Name = GPN(playerid);
 	new text[36];
 	format(text, 36, "~n~%s(%i)~n~~n~", Name, playerid);
-	NSusUI[playerid] = CreatePlayerTextDraw(playerid, 110, 180, text);
+	NSusUI[playerid] = CreatePlayerTextDraw(playerid, 110, 170, text);
 	PlayerTextDrawSetShadow(playerid, NSusUI[playerid], 0);
 	PlayerTextDrawUseBox(playerid, NSusUI[playerid], 1);
 	PlayerTextDrawLetterSize(playerid, NSusUI[playerid], 0.25, 1.0);
@@ -1737,7 +1901,9 @@ CMD:report(playerid, params[])
 		return SendClientMessage(playerid, COLOR_RED, "Ошибка: В репорте должно быть не более 100 символов.");
 	}
 	new m[144];
-	format(m, 144, "%s(%i) в репорт:%s");
+	new PName[MAX_PLAYER_NAME];
+	PName = GPN(playerid);
+	format(m, 144, "%s(%i) в репорт:%s", PName, playerid, text);
 	for(new i; i < MAX_PLAYERS; i++)
 	{
 		if(PlayerInfo[i][Login] < 1)
@@ -1837,5 +2003,177 @@ CMD:pm(playerid, params[])
 	{
 		return 0;
 	}
+	new plid, text[256];
+	if(sscanf(params, "is", plid, text))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Введите /pm [ID игрока] [Текст].");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный ID игрока.");
+	}
+	if(PlayerInfo[plid][Login] == 0)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Игрок находится не в сети.");
+	}
+	if(isnull(text))
+	{
+	 	return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели сообщение.");
+	}
+	if(strlen(text) > 80)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное");
+	}
+	new m[144];
+	new OName[MAX_PLAYER_NAME];
+	new PName[MAX_PLAYER_NAME];
+	OName = GPN(playerid);
+	PName = GPN(plid);
+	format(m, 144, "%s(%i) для %s(%i): %s", OName, playerid, PName, plid, text);
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(PlayerInfo[i][Admin] > 1)
+		{
+			if(playerid == i) continue;
+			SendClientMessage(i, COLOR_YELLOW, m);
+		}
+	}
+	format(m, 144, "Вам от %s(%i) в ЛС: %s", OName, playerid, text);
+	SendClientMessage(plid, COLOR_YELLOW, m);
+	format(m, 144, "Вы для %s(%i) в ЛС: %s", PName, plid, text);
+	SendClientMessage(playerid, COLOR_YELLOW, m);
+	return 1;
+}
+
+CMD:giveskin(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 2)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде.");
+	}
+	new plid, skin;
+	if(sscanf(params, "ii", plid, skin))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Формат ввода: /skin [ID игрока] [ID скина]");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id игрока.");
+	}
+	if(PlayerInfo[plid][Login] == 0)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+	}
+	if(skin < 0 || skin > 311)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id скина.");
+	}
+	SetPlayerSkin(plid, skin);
+	new PName[MAX_PLAYER_NAME];
+	new AName[MAX_PLAYER_NAME];
+	PName = GPN(plid);
+	AName = GPN(playerid);
+	new query[256];
+	format(query, 256, "UPDATE `Accounts` SET `Skin` = '%i' WHERE `Name` = '%s'", skin, PName);
+	mysql_query(sql, query);
+	format(query, 256, "SELECT Skin FROM `Accounts` WHERE `Name` = '%s'", PName);
+	mysql_query(sql, query);
+	new nskin;
+	cache_get_value_name_int(0, "Skin", nskin);
+	if(nskin == skin)
+	{
+		new text[144];
+		format(text, 144, "Сервер: Вы выдали постоянный скин %i игроку %s (%i).", skin, PName, plid);
+		SendClientMessage(playerid, COLOR_BLUE, text);
+		format(text, 144, "Администратор %s выдал Вам скин %i id.", AName, skin);
+		SendClientMessage(plid, COLOR_BLUE, text);
+		PlayerInfo[plid][Skin] = skin;
+	}
+	else
+	{
+		new text[144];
+		SendClientMessage(playerid, COLOR_RED, "Ошибка: Произошла серверная ошибка. Сообщите об этом Главному Администратору.");
+		format(text, 144, "Вы выдали ВРЕМЕННЫЙ скин %i id игроку %s (%i)", skin, PName, plid);
+		SendClientMessage(playerid, COLOR_BLUE, text);
+		format(text, 144, "Администратор %s выдал Вам ВРЕМЕННЫЙ скин %i id", AName, skin);
+		SendClientMessage(plid, COLOR_BLUE, text);
+		PlayerInfo[plid][Skin] = skin;
+	}
+	return 1;
+}
+
+CMD:setadminlevel(playerid, params[])
+{
+	if(PlayerInfo[playerid][Login] == 0)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 4)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде.");
+	}
+	new plid, lvl;
+	if(sscanf(params, "ii", plid, lvl))
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Формат ввода: /setadminlevel [ID игрока] [уровень админки]");
+	}
+	if(plid < 0 || plid > MAX_PLAYERS - 1)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы ввели некорректный id игрока.");
+	}
+	if(PlayerInfo[plid][Login] == 0)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
+	}
+	if(lvl < 0 || lvl > 3)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете выдать админку выше 3 уровня");
+	}
+	new query[256];
+	new PName[MAX_PLAYER_NAME];
+	PName = GPN(plid);
+	new AName[MAX_PLAYER_NAME];
+	AName = GPN(playerid);
+	format(query, 256, "UPDATE `Accounts` SET `Admin` = '%i' WHERE `Name` = '%s'", lvl, PName);
+	mysql_query(sql, query);
+	format(query, 256, "SELECT Admin FROM `Accounts` WHERE `Name` = '%s'", PName);
+	mysql_query(sql, query);
+	new nlvl;
+	cache_get_value_name_int(0, "Admin", nlvl);
+	if(nlvl == lvl)
+	{
+		//Поставил админа
+		format(query, 256, "Вы установили игроку %s(%i) уровень админа %i.", PName, plid, nlvl);
+		SendClientMessage(playerid, COLOR_BLUE, query);
+		format(query, 256, "Администратор %s выдал Вам %i уровень админа", AName, nlvl);
+		SendClientMessage(playerid, COLOR_BLUE, query);
+		PlayerInfo[plid][Admin] = nlvl;
+	}
+	else
+	{
+		//Произошла ошибка
+		format(query, 256, "Сервер: произошла некоторая ошибка. Сообщите об этом главному администратору.");
+		SendClientMessage(playerid, COLOR_RED, query);
+	}
+	return 1;
+}
+
+CMD:amenu(playerid)
+{
+	if(PlayerInfo[playerid][Login] < 1)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Admin] < 3)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: У вас нет доступа к этой команде!");
+	}
+	new text[200];
+	format(text, 200, "Настройка сервера\tЗначение\nТаймер в лобби\t%i сек\nТаймер игры:\t%i сек", TimeInLobby, TimeInGame);
+	ShowPlayerDialog(playerid, 3, DIALOG_STYLE_TABLIST_HEADERS, "Настройки сервера", text, "Выбор", "Отмена");
 	return 1;
 }
