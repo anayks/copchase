@@ -52,6 +52,7 @@ enum PI
 	Score,
 	Attempts,
 	Wins,
+	Slot,
 }
 
 enum LI
@@ -198,7 +199,7 @@ public OnPlayerConnect(playerid)
 	}
 	else
 	{
-		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Добро пожаловать на Copchase Server\nВаш аккаунт зарегистрирован.\nЧтобы начать игру, Вам нужно ввести пароль,\nКоторый Вы указали при регистрации.", "Далее", "Отмена");
+		ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "{ffffff}Добро пожаловать на Copchase Server\nВаш аккаунт зарегистрирован.\nЧтобы начать игру, Вам нужно ввести пароль,\nКоторый Вы указали при регистрации.", "Далее", "Отмена");
 	}
 	RemoveBuildingForPlayer(playerid, 3757, 1593.4688, -1368.7344, 32.2500, 0.25);
 	RemoveBuildingForPlayer(playerid, 1290, 1530.5625, -2677.1250, 13.6250, 0.25);
@@ -265,10 +266,15 @@ public OnPlayerDisconnect(playerid, reason)
 					{
 						LobbyID[lobbyid][i] = -1;
 						LobbyInfo[lobbyid][Players]--;
+						continue;
+					}
+					if(LobbyID[lobbyid][i] != -1)
+					{
+						ColorPoliceUI(playerid, PlayerInfo[playerid][Slot]);
 					}
 				}
+				PlayerInfo[playerid][Slot] = -1;
 			}
-			//Функция очистки лобби
 		}
 	}
 	PlayerInfo[playerid][Skin] 		= -1;
@@ -361,7 +367,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		    {
 	 			if(!strlen(inputtext) || strlen(inputtext) < 6 || strlen(inputtext) > 20)
 			    {
-       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Произошла ошибка. \nПожалуйста, повторите попытку.", "Продолжить", "");
+       				ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "{ffffff}Произошла ошибка. \nПожалуйста, повторите попытку авторизации.\n\n\t{00ff00}Примечание:\n\t- Пароль чувствителен к регистру.", "Продолжить", "");
        				PlayerInfo[playerid][Attempts]++;
        				if(PlayerInfo[playerid][Attempts] == 3)
        				{
@@ -380,7 +386,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						    case '_': continue;
 						    default:
 						    {
-						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Вы ввели запрещённые символы\nПожалуйста, повторите попытку.", "Продолжить", "");
+						    	ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "{ffffff}Вы ввели запрещённые символы\nПожалуйста, повторите попытку авторизации.\n\n\t{00ff00}Примечание:\n\t- Пароль чувствителен к регистру.", "Продолжить", "");
 						    	PlayerInfo[playerid][Attempts]++;
 			       				if(PlayerInfo[playerid][Attempts] == 3)
 			       				{
@@ -399,7 +405,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					cache_get_value_name(0, "Password", password);
 					if(strcmp(password, inputtext, false) != 0)
 					{
-						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "Пароль введен неверно\nПожауйста, повторите попытку.", "Продолжить", "");
+						ShowPlayerDialog(playerid, 1, DIALOG_STYLE_INPUT, "Авторизация", "{ffffff}Пароль введен неверно\nПожауйста, повторите попытку авторизации.\n\n\t{00ff00}Примечание:\n\t- Пароль чувствителен к регистру.", "Продолжить", "");
 						PlayerInfo[playerid][Attempts]++;
 	       				if(PlayerInfo[playerid][Attempts] == 3)
 	       				{
@@ -417,6 +423,10 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 					  	format(query, 256, "UPDATE `Accounts` SET `Online` = %i WHERE `Name` = '%s'", playerid, Name);
 						mysql_query(sql, query);
 					  	SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
+					  	for(new i; i < MAX_PLAYERS; i++)
+					  	{
+					  		SetPlayerMarkerForPlayer(playerid, i, 0xFFFFFF00);
+					  	}
 					}
 				}
 		    }
@@ -668,6 +678,23 @@ public OnPlayerInteriorChange(playerid, newinteriorid, oldinteriorid)
 
 public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
+	if(newkeys & KEY_YES)
+	{
+		new Lobby = PlayerInfo[playerid][Lb];
+		for(new i; i < MAX_PLOBBY; i++)
+		{
+			if(LobbyID[Lobby][i] == -1)
+			{
+				continue;
+			}	
+			if(LobbyID[Lobby][i] == LobbyInfo[Lobby][Suspect])
+			{
+				continue;
+			}
+			BluePoliceUI(LobbyID[Lobby][i], PlayerInfo[playerid][Slot]);
+			SetPlayerMarkerForPlayer(LobbyID[Lobby][i], playerid, 0x0000FFFF);
+		}
+	}
 	return 1;
 }
 
@@ -949,7 +976,7 @@ stock CreatePoliceUI(playerid)
 		PlayerTextDrawFont(playerid, PoliceUI[playerid][i], 2);
 		PlayerTextDrawShow(playerid, PoliceUI[playerid][i]);
 
-		RangeUI[playerid][i] = CreatePlayerTextDraw(playerid, 600, 230 + 15 * i, "blizko");
+		RangeUI[playerid][i] = CreatePlayerTextDraw(playerid, 600, 230 + 15 * i, "");
 		PlayerTextDrawSetShadow(playerid, RangeUI[playerid][i], 0);
 		PlayerTextDrawLetterSize(playerid, RangeUI[playerid][i], 0.2, 0.8);
 		PlayerTextDrawUseBox(playerid, RangeUI[playerid][i], 1);
@@ -969,6 +996,19 @@ stock ShowPoliceUI(playerid)
 		PlayerTextDrawShow(playerid, PoliceUI[playerid][k]);
 		PlayerTextDrawShow(playerid, RangeUI[playerid][k]);
 	}
+}
+
+stock ColorPoliceUI(playerid, slot)
+{
+	PlayerTextDrawBoxColor(playerid, PoliceUI[playerid][slot], 0xFF0000FF);
+	PlayerTextDrawBoxColor(playerid, RangeUI[playerid][slot], 0xff0000FF);
+	PlayerTextDrawSetString(playerid, RangeUI[playerid][slot], "");
+}
+
+stock BluePoliceUI(playerid, slot)
+{
+	PlayerTextDrawBoxColor(playerid, PoliceUI[playerid][slot], 0x00DD33FF);
+	PlayerTextDrawBoxColor(playerid, RangeUI[playerid][slot], 0x00DD33FF);
 }
 
 stock HidePoliceUI(playerid)
@@ -1033,6 +1073,18 @@ public OnPlayerDeath(playerid, killerid, reason)
 						LobbyInfo[lobbyid][Players]--;
 						break;
 					}
+				}
+				for(new i; i < MAX_PLOBBY; i++)
+				{
+					if(LobbyID[lobbyid][i] == playerid)
+					{
+						continue;
+					}
+					if(LobbyID[lobbyid][i] == -1)
+					{
+						continue;
+					}
+					ColorPoliceUI(i, PlayerInfo[playerid][Slot]);
 				}
 				HideLeftUI(playerid);
 				HidePoliceUI(playerid);
@@ -1138,11 +1190,15 @@ public Bit()
 				DestroyTimerUI(LobbyInfo[i][Suspect]);
 				CreateSusUI(LobbyInfo[i][Suspect]);
 				ShowSusUI(LobbyInfo[i][Suspect]);
+				PutPlayerInVehicle(LobbyInfo[i][Suspect], PlayerVehicle[LobbyInfo[i][Suspect]], 0);
+				new d = 0;
 				for(new k; k < MAX_PLOBBY; k++)
 				{
 					if(LobbyID[i][k] == LobbyInfo[i][Suspect]) continue;
 					if(LobbyID[i][k] == -1) continue;
 					if(isnull(LobbyName[i][k])) continue;
+					PlayerInfo[LobbyID[i][k]][Slot] = d;
+					d++;
 					CreatePoliceUI(LobbyID[i][k]);
 					ShowPoliceUI(LobbyID[i][k]);
 					SendClientMessage(LobbyID[i][k], 0xFF000000, "Лобби запущено.");
@@ -1157,7 +1213,6 @@ public Bit()
 						SearchPriority();
 					}
 				}
-				PutPlayerInVehicle(LobbyInfo[i][Suspect], PlayerVehicle[LobbyInfo[i][Suspect]], 0);
 				new pl = LobbyInfo[i][TextDraws] + 1;
 				new Occupied[MAX_PLOBBY];
 				for(new k; k < MAX_PLOBBY; k++)
@@ -1504,6 +1559,7 @@ public EndLobby(lobbyid)
 		DestroyPoliceUI(LobbyID[lobbyid][i]);
 		CameraMenu(LobbyID[lobbyid][i]);
 		ShowMenuTD(LobbyID[lobbyid][i]);
+		PlayerInfo[LobbyID[lobbyid][i]][Lb]=-1;
 		PlayerInfo[LobbyID[lobbyid][i]][Lb]=-1;
 	}
 	DestroyVehicle(PlayerVehicle[LobbyInfo[lobbyid][Suspect]]);
@@ -1979,6 +2035,10 @@ CMD:kick(playerid, params[])
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
 	}
+	if(plid == playerid)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете кикнуть самого себя");
+	}
 	if(PlayerInfo[plid][Login] == 0)
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Данный игрок не авторизован.");
@@ -2032,6 +2092,10 @@ CMD:mute(playerid, params[])
 	if(sscanf(params, "iis", plid, time, reason)) 
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: используйте /mute [id] [кол-во минут] [причина]");
+	}
+	if(playerid == plid)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете использовать мут на самого себя.");
 	}
 	if(isnull(reason))
 	{
@@ -2169,6 +2233,10 @@ CMD:warn(playerid, params[])
 	if(sscanf(params, "is", plid, text))
 	{
 		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не ввели текст.");
+	}
+	if(plid == playerid)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете выдать предупреждение самому себе.");
 	}
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
