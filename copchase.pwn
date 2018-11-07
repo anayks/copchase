@@ -5,6 +5,7 @@
 #include <a_mysql>
 #include <sscanf>
 #include <streamer>
+
 main()
 {
 	print("\n----------------------------------");
@@ -53,6 +54,8 @@ enum PI
 	Attempts,
 	Wins,
 	Slot,
+	Vision,
+	Amt,
 }
 
 enum LI
@@ -63,6 +66,7 @@ enum LI
 	Activate,
 	Timer,
 	TextDraws,
+	SA,
 }
 
 enum SI
@@ -116,6 +120,7 @@ public OnGameModeInit()
 		PlayerInfo[i][Login] = 0;
 		PlayerInfo[i][Skin] = -1;
 		PlayerInfo[i][Admin] = -1;
+		PlayerInfo[i][Vision] = 1;
 	}
 	ServerInfo[TimeInLobby] = 30;
 	ServerInfo[TimeInGame] = 60;
@@ -190,7 +195,9 @@ public OnPlayerConnect(playerid)
 	mysql_query(sql, query);
 	new row;
 	PlayerInfo[playerid][Warn] = 0;
+	PlayerInfo[playerid][Attempts] = 0;
 	cache_get_value_index_int(0, 0, row);
+	PlayerInfo[playerid][Amt] = 0;
 	if(row == 0)
 	{
 		new text[1000];
@@ -289,6 +296,7 @@ public OnPlayerDisconnect(playerid, reason)
 	PlayerInfo[playerid][Mute]		= -1;
 	PlayerInfo[playerid][Warn]		= -1;
 	PlayerInfo[playerid][Attempts] 	= -1;
+	PlayerInfo[playerid][Vision] 	= 0;
 	return 1;
 }
 
@@ -419,13 +427,14 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 						CameraMenu(playerid);
 					  	CreateMenuTD(playerid);
 					  	ShowMenuTD(playerid);
-					  	SendClientMessage(playerid, 0xFF000000, "Вы авторизованы.");
+					  	SendClientMessage(playerid, 0x0055FF00, "Добро пожаловать на CopChase Project");
 					  	format(query, 256, "UPDATE `Accounts` SET `Online` = %i WHERE `Name` = '%s'", playerid, Name);
 						mysql_query(sql, query);
 					  	SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
 					  	for(new i; i < MAX_PLAYERS; i++)
 					  	{
 					  		SetPlayerMarkerForPlayer(playerid, i, 0xFFFFFF00);
+					  		SetPlayerMarkerForPlayer(i, playerid, 0xFFFFFF00);
 					  	}
 					}
 				}
@@ -437,9 +446,86 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			{
 				if(listitem == 0)
 				{
-					new text[200];
-					format(text, 200, "Настройка сервера\tЗначение\nТаймер в лобби\t%i сек\nТаймер игры:\t%i сек", ServerInfo[TimeInLobby], ServerInfo[TimeInGame]);
+					new text[300];
+					format(text, 300, "Настройка сервера\tЗначение\nТаймер в лобби:\t%i сек\nТаймер игры:\t%i сек", ServerInfo[TimeInLobby], ServerInfo[TimeInGame]);
 					ShowPlayerDialog(playerid, 4, DIALOG_STYLE_TABLIST_HEADERS, "Настройки лобби", text, "Выбор", "Отмена");
+				}
+			}
+		}
+		case 4:
+		{
+			if(response)
+			{
+				new text[300];
+				if(listitem == 0) // Таймер в лобби
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 5, DIALOG_STYLE_INPUT, "Настройка таймера в лобби.", text, "Ввод", "Отмена");
+				}
+				else if(listitem == 1) //Таймер игры
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 6, DIALOG_STYLE_INPUT, "Настройка таймера в игре.", text, "Ввод", "Отмена");
+				}
+			}
+		}
+		case 5:
+		{
+			if(response) //Если нажал "Ввод"
+			{
+				new text[300];
+				if(isnull(inputtext))
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i\n\n{ff0000}Ошибка: Вы не ввели число!", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 5, DIALOG_STYLE_INPUT, "Настройка таймера в лобби.", text, "Ввод", "Отмена");
+				}
+				new ch;
+				ch = strval(inputtext);
+				if(ch < 1)
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i\n\n{ff0000}Ошибка: Вы ввели некорректное число!", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 5, DIALOG_STYLE_INPUT, "Настройка таймера в лобби.", text, "Ввод", "Отмена");
+				}
+				else
+				{
+					new Name[MAX_PLAYER_NAME];
+					Name = GPN(playerid);
+					format(text, 300, "Адм. %s изменил время в лобби с %i до %i сек.", Name, ServerInfo[TimeInLobby], ch);
+					for(new i; i < MAX_PLAYERS; i++)
+					{
+						SendClientMessage(i, COLOR_BLUE, text);
+					}
+					ServerInfo[TimeInLobby] = ch;
+				}
+			}
+		}
+		case 6:
+		{
+			if(response)
+			{
+				new text[300];
+				if(isnull(inputtext))
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i\n\n{ff0000}Ошибка: Вы не ввели число!", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 6, DIALOG_STYLE_INPUT, "Настройка таймера в игре.", text, "Ввод", "Отмена");
+				}
+				new ch;
+				ch = strval(inputtext);
+				if(ch < 1)
+				{
+					format(text, 300, "Формат ввода данных: целочисленное значение.\nФормат числа: секунды.\nУстановленное время сейчас:\t{0066ff}%i\n\n{ff0000}Ошибка: Вы ввели некорректное число!", ServerInfo[TimeInLobby]);
+					ShowPlayerDialog(playerid, 6, DIALOG_STYLE_INPUT, "Настройка таймера в игре.", text, "Ввод", "Отмена");
+				}
+				else
+				{
+					new Name[MAX_PLAYER_NAME];
+					Name = GPN(playerid);
+					format(text, 300, "Адм. %s изменил время в игре с %i до %i сек.", Name, ServerInfo[TimeInLobby], ch);
+					for(new i; i < MAX_PLAYERS; i++)
+					{
+						SendClientMessage(i, COLOR_BLUE, text);
+					}
+					ServerInfo[TimeInGame] = ch;
 				}
 			}
 		}
@@ -564,7 +650,29 @@ public OnPlayerText(playerid, text[])
 		SendClientMessage(playerid, 0xFF000000, "Ошибка: У вас затычка. Вы не можете отправлять сообщения в чат");
 		return 0;
 	}
-	return 1;
+	if(PlayerInfo[playerid][Amt] > 5)
+	{
+		SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете писать в чат так часто.");
+		return 0;
+	}
+	else
+	{
+		new Name[MAX_PLAYER_NAME];
+		Name = GPN(playerid);
+		new texts[144];
+		if(strlen(text) > 100) 
+		{
+			SendClientMessage(playerid, COLOR_RED, "Ошибка: Ваше сообщение слишком длинное!");
+			return 0;
+		}
+		format(texts, 144, "{ffb000}%s (%i): %s", Name, playerid, text);
+		for(new i; i < MAX_PLAYERS; i++)
+		{
+			SendClientMessage(i, 0xFFFFFF00, texts);
+		}
+		PlayerInfo[playerid][Amt] = PlayerInfo[playerid][Amt] + 4;
+		return 0;
+	}
 }
 
 public OnPlayerCommandText(playerid, cmdtext[])
@@ -588,12 +696,87 @@ public OnPlayerSpawn(playerid)
 	{
 		SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
 	}
+	else if(PlayerInfo[playerid][Lb] > -1)
+	{
+		SetPlayerSkin(playerid, PlayerInfo[playerid][Skin]);
+		SetPlayerPos(playerid, 285.9170, -1809.1401, 4.4176);
+		SetPlayerFacingAngle(playerid, 270);
+	}
 	return 1;
 }
 
 public OnPlayerExitVehicle(playerid, vehicleid)
 {
-	return 1;
+	new lobbyid = PlayerInfo[playerid][Lb];
+	if(lobbyid < 0) // Если человек не в лобби
+	{
+		return 1;
+	}
+	else //Если человек в лобби
+	{	
+		if(LobbyInfo[lobbyid][Activate] > 2) // Если лобби в стадии игры
+		{
+			if(LobbyInfo[lobbyid][Suspect] == playerid)
+			{
+				if(LobbyInfo[lobbyid][SA] == 0) // Если он ещё не выходил из машины
+				{
+					LobbyInfo[lobbyid][SA] = 1;
+					for(new i; i < MAX_PLOBBY; i++)
+					{
+						if(LobbyID[lobbyid][i] == -1)
+						{
+							continue;
+						}
+						GivePlayerWeapon(LobbyID[lobbyid][i], 24, 40);
+						SetPlayerSkillLevel(playerid, WEAPONSKILL_DESERT_EAGLE, 1000);
+					}
+					for(new i; i < MAX_PLOBBY; i++)
+					{
+						if(LobbyID[lobbyid][i] == -1)
+						{
+							continue;
+						}
+						if(LobbyInfo[lobbyid][Suspect] == LobbyID[lobbyid][i])
+						{
+							continue;
+						}
+						SendClientMessage(playerid, 0x005F9900, "** [Рация 911] Диспетчер: подозреваемый вооружен! Разрешено применение огнестрельного оружия! **");
+					}
+					return 1;
+				}
+				else // Если выходил ранее
+				{
+					return 1;
+				}
+			}
+			else // Если игрок не саспект
+			{
+				return 1;
+			}
+		}
+		else // Если он вышел в лобби
+		{
+			return 1;
+		}
+	}
+}
+
+public OnPlayerCommandReceived(playerid,cmdtext[])
+{
+	if(PlayerInfo[playerid][Login] < 1)
+	{
+		return 0;
+	}
+	if(PlayerInfo[playerid][Amt] < 5)
+	{
+		PlayerInfo[playerid][Amt] = PlayerInfo[playerid][Amt] + 2;
+		return 1;
+	}
+	else
+	{
+		SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы вводите команды слишком часто!");
+		return 0;
+	}
 }
 
 public OnPlayerStateChange(playerid, newstate, oldstate)
@@ -680,19 +863,48 @@ public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
 	if(newkeys & KEY_YES)
 	{
-		new Lobby = PlayerInfo[playerid][Lb];
-		for(new i; i < MAX_PLOBBY; i++)
+		if(PlayerInfo[playerid][Amt] < 5)
 		{
-			if(LobbyID[Lobby][i] == -1)
+			new Lobby = PlayerInfo[playerid][Lb];
+			if(PlayerInfo[playerid][Vision] == 0)
 			{
-				continue;
-			}	
-			if(LobbyID[Lobby][i] == LobbyInfo[Lobby][Suspect])
-			{
-				continue;
+				for(new i; i < MAX_PLOBBY; i++)
+				{
+					if(LobbyID[Lobby][i] == -1)
+					{
+						continue;
+					}	
+					if(LobbyID[Lobby][i] == LobbyInfo[Lobby][Suspect])
+					{
+						continue;
+					}
+					BluePoliceUI(LobbyID[Lobby][i], PlayerInfo[playerid][Slot]);
+					SetPlayerMarkerForPlayer(LobbyID[Lobby][i], playerid, 0x0000FFFF);
+				}
+				PlayerInfo[playerid][Vision] = 1;
 			}
-			BluePoliceUI(LobbyID[Lobby][i], PlayerInfo[playerid][Slot]);
-			SetPlayerMarkerForPlayer(LobbyID[Lobby][i], playerid, 0x0000FFFF);
+			else
+			{
+				for(new i; i < MAX_PLOBBY; i++)
+				{
+					if(LobbyID[Lobby][i] == -1)
+					{
+						continue;
+					}
+					if(LobbyID[Lobby][i] == LobbyInfo[Lobby][Suspect])
+					{
+						continue;
+					}
+					DefaultPoliceUI(LobbyID[Lobby][i], PlayerInfo[playerid][Slot]);
+					SetPlayerMarkerForPlayer(LobbyID[Lobby][i], playerid, 0xFFFFFF00);
+				}
+				PlayerInfo[playerid][Vision] = 0;
+			}
+			PlayerInfo[playerid][Amt]++;
+		}
+		else
+		{
+			SendClientMessage(playerid, COLOR_RED, "Ошибка:Не флудите!");
 		}
 	}
 	return 1;
@@ -998,6 +1210,12 @@ stock ShowPoliceUI(playerid)
 	}
 }
 
+stock DefaultPoliceUI(playerid, slot)
+{
+	PlayerTextDrawBoxColor(playerid, PoliceUI[playerid][slot], 0x000000FF);
+	PlayerTextDrawBoxColor(playerid, RangeUI[playerid][slot], 0x000000FF);
+}
+
 stock ColorPoliceUI(playerid, slot)
 {
 	PlayerTextDrawBoxColor(playerid, PoliceUI[playerid][slot], 0xFF0000FF);
@@ -1093,6 +1311,10 @@ public OnPlayerDeath(playerid, killerid, reason)
 				DestroyVehicle(PlayerVehicle[playerid]);
 				CameraMenu(playerid);
 				ShowMenuTD(playerid);
+			}
+			else // Если полицейский умер последним
+			{
+
 			}
 		}
 	}
@@ -1192,6 +1414,7 @@ public Bit()
 				ShowSusUI(LobbyInfo[i][Suspect]);
 				PutPlayerInVehicle(LobbyInfo[i][Suspect], PlayerVehicle[LobbyInfo[i][Suspect]], 0);
 				new d = 0;
+				new l = random(3);
 				for(new k; k < MAX_PLOBBY; k++)
 				{
 					if(LobbyID[i][k] == LobbyInfo[i][Suspect]) continue;
@@ -1208,6 +1431,22 @@ public Bit()
 					PlayerTextDrawShow(LobbyID[i][k], LeftUP[LobbyID[i][k]]);
 					ShowLeftUI(LobbyID[i][k]);
 					PutPlayerInVehicle(LobbyID[i][k], PlayerVehicle[LobbyID[i][k]], 0);
+					switch(l)
+					{
+						case 0:
+						{
+							SendClientMessage(LobbyID[i][k], 0x005F9900, "** [Рация 911] Диспетчер: подозреваемый ограбил магазин с продуктами, пытается скрыться! **");
+						}
+						case 1:
+						{
+							SendClientMessage(LobbyID[i][k], 0x005F9900, "** [Рация 911] Диспетчер: подозреваемый избил бездомного, пытается скрыться! **");
+						}
+						case 2:
+						{
+							SendClientMessage(LobbyID[i][k], 0x005F9900, "** [Рация 911] Диспетчер: подозреваемый угрожал пистолетом банкиру, пытается скрыться! **");
+						}
+					}
+
 					if(Priority == i) 
 					{
 						SearchPriority();
@@ -1540,6 +1779,21 @@ public Bit()
 		{
 			PlayerInfo[i][Mute]--;
 			SendClientMessage(i, 0xee00ee, "Сервер: С Вас снята затычка. Можете продолжать общение ;)");
+		}	
+	}
+	for(new i; i < MAX_PLAYERS; i++)
+	{
+		if(PlayerInfo[i][Login] == 0)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Amt] == 0)
+		{
+			continue;
+		}
+		if(PlayerInfo[i][Amt] > 0)
+		{
+			PlayerInfo[i][Amt]--;
 		}
 	}
 	return 1;
@@ -1943,7 +2197,21 @@ public CreateSusUI(playerid)
 	new Text[200];
 	new name[MAX_PLAYER_NAME];
 	name = GPN(LobbyInfo[PlayerInfo[playerid][Lb]][Suspect]);
-	format(Text, 200, "~n~~n~Time remaining: 10 sec~n~~n~Cops remaining: 1~n~~n~CAR HP: 1000~n~~n~");
+	new lobbyid = PlayerInfo[playerid][Lb];
+	new ch;
+	for(new i; i < MAX_PLOBBY; i++)
+	{
+		if(LobbyID[lobbyid][i] == LobbyInfo[lobbyid][Suspect])
+		{
+			continue;
+		}
+		if(LobbyID[lobbyid][i] == -1)
+		{
+			continue;
+		}
+		ch++;
+	}
+	format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: %i~n~~n~CAR HP: 1000~n~~n~", ServerInfo[TimeInGame],ch);
 	SusUI[playerid] = CreatePlayerTextDraw(playerid, 110, 200, Text);
 	PlayerTextDrawSetShadow(playerid, SusUI[playerid], 0);
 	PlayerTextDrawUseBox(playerid, SusUI[playerid], 1);
@@ -1999,14 +2267,27 @@ public UpdateSusUI(playerid)
 	new Veh = GetPlayerVehicleID(playerid);
 	new Float:VHP;
 	new PlayerLobby = PlayerInfo[playerid][Lb];
+	new ch;
+	for(new i; i < MAX_PLOBBY; i++)
+	{
+		if(LobbyID[PlayerLobby][i] == LobbyInfo[PlayerLobby][Suspect])
+		{
+			continue;
+		}
+		if(LobbyID[PlayerLobby][i] == -1)
+		{
+			continue;
+		}
+		ch++;
+	}
 	if(!IsPlayerInAnyVehicle(playerid)) 
 	{
-		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: 1~n~~n~CAR HP: NOT SEARCHED~n~~n~", LobbyInfo[PlayerLobby][Timer]);
+		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: %i~n~~n~CAR HP: NOT SEARCHED~n~~n~", LobbyInfo[PlayerLobby][Timer], ch);
 	}
 	else
 	{
 		GetVehicleHealth(Veh, VHP);
-		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: 1~n~~n~CAR HP: %i~n~~n~", LobbyInfo[PlayerLobby][Timer], floatround(VHP));
+		format(Text, 200, "~n~~n~Time remaining: %i sec~n~~n~Cops remaining: %i~n~~n~CAR HP: %i~n~~n~", LobbyInfo[PlayerLobby][Timer], ch, floatround(VHP));
 	}
 	PlayerTextDrawSetString(playerid, SusUI[playerid], Text);
 	return 1;
@@ -2042,6 +2323,10 @@ CMD:kick(playerid, params[])
 	if(PlayerInfo[plid][Login] == 0)
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Данный игрок не авторизован.");
+	}
+	if(PlayerInfo[plid][Admin] >= PlayerInfo[playerid][Admin])
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете этого сделать.");
 	}
 	if(isnull(reason))
 	{
@@ -2104,6 +2389,10 @@ CMD:mute(playerid, params[])
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: id игрока не может быть меньше нуля и больше 299");
+	}
+	if(PlayerInfo[plid][Admin] >= PlayerInfo[playerid][Admin])
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете этого сделать.");
 	}
 	if(PlayerInfo[plid][Mute] > 0)
 	{
@@ -2241,6 +2530,10 @@ CMD:warn(playerid, params[])
 	if(plid < 0 || plid > MAX_PLAYERS - 1)
 	{
 		return SendClientMessage(playerid, 0xFF000000, "Ошибка: Вы ввели id игрока вне диапазона");
+	}
+	if(PlayerInfo[plid][Admin] >= PlayerInfo[playerid][Admin])
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете этого сделать.");
 	}
 	if(isnull(text))
 	{
@@ -2432,6 +2725,14 @@ CMD:setadminlevel(playerid, params[])
 	{
 		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Данный игрок не авторизован.");
 	}
+	if(plid == playerid)
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете этого сделать.");
+	}
+	if(PlayerInfo[playerid][Admin] <= PlayerInfo[plid][Admin])
+	{
+		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете этого сделать.");
+	}
 	if(lvl < 0 || lvl > 3)
 	{
 		return SendClientMessage(playerid, COLOR_RED, "Ошибка: Вы не можете выдать админку выше 3 уровня");
@@ -2620,7 +2921,7 @@ CMD:r(playerid, params[])
 	new m[144];
 	new PName[MAX_PLAYER_NAME];
 	PName = GPN(playerid);
-	format(m, 144, "%s (%i)в рацию: %s", PName, playerid, text);
+	format(m, 144, "%s (%i) в рацию: %s", PName, playerid, text);
 	for(new i; i < MAX_PLOBBY; i++)
 	{
 		if(LobbyID[lobbyid][i] == -1) 
